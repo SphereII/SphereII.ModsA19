@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xml>
+  <ModInfo>
+    <Name value="SphereII NPC Dialog Windows" />
+    <Description value="Add new dialog windows for NPCs. Early loading for over-ride" />
+    <Author value="sphereii" />
+    <Version value="19.0.0.4" />
+  </ModInfo>
+  <DMT Hash="387d2b927dfb4ace55453e99d9077f1e">
+    <dependencies>
+      <dependancy>0-SphereIICore</dependancy>
+    </dependencies>
+    <conflicts />
+  </DMT>
+</xml>

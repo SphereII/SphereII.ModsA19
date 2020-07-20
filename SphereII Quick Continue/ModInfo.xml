@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xml>
+  <ModInfo>
+    <Name value="SphereII Quick Continue" />
+    <Description value="Enables auto-loading in the last loaded game when Scroll Lock is on" />
+    <Author value="sphereii" />
+    <Version value="19.0.0.665" />
+  </ModInfo>
+  <DMT Hash="c48ae70cfaf229649a06b33c8f0aefbf">
+    <dependencies />
+    <conflicts />
+  </DMT>
+</xml>

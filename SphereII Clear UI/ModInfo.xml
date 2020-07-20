@@ -1,0 +1,16 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+  <ModInfo>
+    <Name value="SphereII Clear UI" />
+    <Description value="A minamlist dream come true: Removes nearly all everthing from your screen to a more immersive play." />
+    <Author value="Sirillion and SphereII" />
+    <Version value="19.0.0.19" />
+    <Website value="" />
+  </ModInfo>
+  <DMT Hash="8c29a6d72b849ae9cf23f6d08d6c41d9">
+    <dependencies>
+      <dependancy>0-SphereIICore</dependancy>
+    </dependencies>
+    <conflicts />
+  </DMT>
+</xml>

@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<xml>
+  <ModInfo>
+    <Name value="SphereII Legacy Distant Terrain" />
+    <Description value="Re-enables Legacy Distant Terrain" />
+    <Author value="sphereii" />
+    <Version value="19.0.0.663" compat="A18.1, A18e" />
+    <Website value="" />
+  </ModInfo>
+  <DMT Hash="7a498d569ee2754ffe05d8f9da9b0313">
+    <dependencies />
+    <conflicts />
+  </DMT>
+</xml>
