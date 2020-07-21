@@ -54,7 +54,48 @@ public class EntityAliveSDX : EntityNPC
     }
 
 
+    //public override bool IsAlive()
+    //{
+    //    if (IsAvailable() == false)
+    //        return false;
 
+    //    return base.IsAlive();
+    //}
+
+
+    //// if the NPC isn't available, don't return a loot. This disables the "Press <E> to search..."
+    //public override int GetLootList()
+    //{
+    //    if (IsAvailable() == false)
+    //        return 0;
+
+    //    return base.GetLootList();
+    //}
+    //// Check to see if the NPC is available
+    //public bool IsAvailable()
+    //{
+    //    if (this.Buffs.HasCustomVar("onMission") && this.Buffs.GetCustomVar("onMission") == 1f)
+    //        return false;
+    //    return true;
+    //}
+
+
+    // SendOnMission will make the NPC disappear and be unavailable
+    public void SendOnMission( bool send )
+    {
+        if (send)
+        {
+            this.Buffs.AddCustomVar("onMission", 1f);
+            this.emodel.avatarController.SetBool("IsBusy", true);
+            this.GetRootTransform().gameObject.SetActive(false);
+        }
+        else
+        {
+            this.Buffs.AddCustomVar("onMission", 0f);
+            this.emodel.avatarController.SetBool("IsBusy", false);
+            this.GetRootTransform().gameObject.SetActive(true);
+        }
+    }
     public override float GetEyeHeight()
     {
         if (flEyeHeight == -1f)
@@ -87,8 +128,12 @@ public class EntityAliveSDX : EntityNPC
 
         if (entityClass.Properties.Values.ContainsKey("SleeperInstantAwake"))
         {
+            Debug.Log("Sleeper is instant awake.");
             isAlwaysAwake = true;
         }
+        else
+            Debug.Log("Sleeper is not instant awake");
+
         if (entityClass.Properties.Values.ContainsKey("Titles"))
         {
             string text = entityClass.Properties.Values["Titles"];
@@ -227,6 +272,7 @@ public class EntityAliveSDX : EntityNPC
         if (IsDead() || NPCInfo == null)
             return new EntityActivationCommand[0];
 
+    
         return new EntityActivationCommand[]
         {
             new EntityActivationCommand("Greet " + EntityName, "talk" , true)
@@ -242,7 +288,6 @@ public class EntityAliveSDX : EntityNPC
         FactionManager.Relationship myRelationship = FactionManager.Instance.GetRelationshipTier(this, _entityFocusing);
         if (myRelationship == FactionManager.Relationship.Hate)
             return false;
-
 
         // If they have attack targets, don't interrupt them.
         if (GetAttackTarget() != null || GetRevengeTarget() != null)
@@ -680,7 +725,6 @@ public class EntityAliveSDX : EntityNPC
             IsDespawned = false;
             return;
         }
-
 
         base.MarkToUnload();
     }

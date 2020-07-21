@@ -118,6 +118,7 @@ public static class SphereII_CaveTunneler
         while (DepthFromTerrain < tHeight || MaxLevels > currentLevel)
         {
             AddLevel(chunk, fastNoise, DepthFromTerrain);
+            AddDecorationsToCave(chunk);
             DepthFromTerrain += 10;
             currentLevel++;
             
