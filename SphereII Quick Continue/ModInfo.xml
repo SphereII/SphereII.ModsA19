@@ -4,9 +4,9 @@
     <Name value="SphereII Quick Continue" />
     <Description value="Enables auto-loading in the last loaded game when Scroll Lock is on" />
     <Author value="sphereii" />
-    <Version value="19.0.0.686" />
+    <Version value="19.0.0.689" />
   </ModInfo>
-  <DMT Hash="b57e9a155f9bc6e8ba2a850e4f353817">
+  <DMT Hash="e65f621004424571348289586d3dabdc">
     <dependencies />
     <conflicts />
   </DMT>

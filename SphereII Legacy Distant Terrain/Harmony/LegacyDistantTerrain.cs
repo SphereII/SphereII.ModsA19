@@ -17,6 +17,22 @@ class SphereII_LegacyDistantTerrain
         }
     }
 
+
+    [HarmonyPatch(typeof(GameOptionsManager))]
+    [HarmonyPatch("ApplyTerrainOptions")]
+    public class SphereII_GameOptionsManager_ApplyTerrainOptions
+    {
+        public static bool Prefix()
+        {
+            Debug.Log(" SphereII Legacy Distant Terrain: Forcing Low Terrain Textures for FPS Boost..." );
+            Shader.EnableKeyword("GAME_TERRAINLOWQ");
+            Shader.DisableKeyword("_MAX3LAYER");
+            Shader.EnableKeyword("_MAX2LAYER");
+
+            return false;
+
+        }
+    }
     [HarmonyPatch(typeof(GameManager))]
     [HarmonyPatch("IsSplatMapAvailable")]
     public class SphereII_GameManager_SplatMap
