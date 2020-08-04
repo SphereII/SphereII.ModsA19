@@ -168,6 +168,9 @@
         <!-- higher numbers will result in more vertical drops. A lower number, less so. -->
         <property name="CaveThresholdY" value="0.01"/>
 
+        <!-- CavePOIs are placed where there is an isolated block (only one side of the block has air ), and a random roll between 0 to 10. Adjust this random roll here.-->
+        <property name="POIRandomRoll" value="1" /> <!-- 10% chance -->
+        
         <!--https://leatherbee.org/index.php/2018/10/24/perlin-and-simplex-noise/#:~:text=Lacunarity%20and%20gain%20measure%20how,amplitude%20of%20the%20previous%20octave. -->
         <!-- Small adjustments are recommended. Large adjustments are.... inconsistent. -->
         <property name="Octaves" value="10"/>

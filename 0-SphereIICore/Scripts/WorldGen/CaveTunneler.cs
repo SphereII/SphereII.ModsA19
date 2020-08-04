@@ -198,6 +198,10 @@ public static class SphereII_CaveTunneler
         int MaxPrefab = int.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "MaxPrefabPerChunk"));
         int currentPrefabCount = 0;
 
+        int RandomRoll = int.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "POIRandomRoll"));
+        if (RandomRoll < 0)
+            RandomRoll = 1;
+
         // Decorate decorate the cave spots with blocks. Shrink the chunk loop by 1 on its edges so we can safely check surrounding blocks.
         for (int chunkX = 1; chunkX < 15; chunkX++)
         {
@@ -224,7 +228,7 @@ public static class SphereII_CaveTunneler
                     _random.SetSeed(chunkX * chunkZ * y);
 
                     // Placing random Prefabs
-                    if (IsIsolatedBlock(chunk, new Vector3i(chunkX, y, chunkZ)) && _random.RandomRange(0, 10) < 1)
+                    if (IsIsolatedBlock(chunk, new Vector3i(chunkX, y, chunkZ)) && _random.RandomRange(0, 10) < RandomRoll)
                     {
                         String FindPrefab = POIs[_random.RandomRange(0, POIs.Count)];
                         Prefab prefab = GameManager.Instance.GetDynamicPrefabDecorator().GetPrefab(FindPrefab);
