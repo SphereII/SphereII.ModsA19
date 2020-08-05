@@ -47,6 +47,19 @@ class AvatarAnimalControllerSDX : AvatarAnimalController
     {
         return rightHandItemTransform;
     }
-   
+    public override void StartAnimationReloading()
+    {
+        this.idleTime = 0f;
+        if (this.bipedTransform == null || !this.bipedTransform.gameObject.activeInHierarchy)
+            return;
+        float value = EffectManager.GetValue(PassiveEffects.ReloadSpeedMultiplier, this.entity.inventory.holdingItemItemValue, 1f, this.entity, null, default(FastTags), true, true, true, true, 1, true);
+        this.SetBool("Reload", true);
+        this.SetFloat("ReloadSpeed", value);
+        
+        // Work around for the Ranged2 EAI Task that needs meta to be greater than 0 to fire.
+        // The same EAI task decrements the meta flag for each bullet it consumes.
+        this.entity.inventory.holdingItemItemValue.Meta = 1;
+
+    }
 }
 
