@@ -22,6 +22,9 @@ class AvatarAnimalControllerSDX : AvatarAnimalController
             Vector3 rotation = AnimationGunjointOffsetData.AnimationGunjointOffset[this.entity.inventory.holdingItem.HoldType.Value].rotation;
             this.rightHandItemTransform.localPosition = position;
             this.rightHandItemTransform.localEulerAngles = rotation;
+            if (this.entity.inventory.holdingItem.HoldingItemHidden)
+                this.rightHandItemTransform.localScale = new Vector3(0, 0, 0);
+            
         }
     }
     public override void SetInRightHand(Transform _transform)
