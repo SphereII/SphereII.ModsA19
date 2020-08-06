@@ -240,13 +240,28 @@ public static class EntityUtilities
             return false;
 
         // Hold your ground
-        if(distanceSq > RetreatDistance && distanceSq <= HoldGroundDistance) // distance greater than 20%  of the range of the weapon
+        if (distanceSq > RetreatDistance && distanceSq <= HoldGroundDistance) // distance greater than 20%  of the range of the weapon
+        {
+            DisplayLog(myEntity.EntityName + " Stopping: Retreat: " + (distanceSq > RetreatDistance) + " Hold: " + (distanceSq <= HoldGroundDistance));
             Stop(EntityID);
-
+        }
         // Back away!
         if (distanceSq > MinMeleeRange && distanceSq <= RetreatDistance )
             BackupHelper(EntityID, myTarget.position, 40);
 
+        if ( distanceSq > ( MaxRangeForWeapon * 2 ) )
+        {
+            DisplayLog(myEntity.EntityName + " Distance is greater than max range. Moving forward... ");
+            return false;
+        }
+
+        // if we can't see the target, move closer rather than staying at range.
+        if ( !myEntity.CanSee( myTarget ))
+        {
+            DisplayLog(myEntity.EntityName + " I cannot see my target.");
+            return false;
+        }
+            
         return true;
     }
 
