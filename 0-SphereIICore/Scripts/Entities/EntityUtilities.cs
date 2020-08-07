@@ -223,11 +223,14 @@ public static class EntityUtilities
         //   Hold Ground Distance between 20 to 50 
         //   Retreat distance is 20%, so 20
         float MaxRangeForWeapon = EffectManager.GetValue(PassiveEffects.MaxRange, myEntity.inventory.holdingItemItemValue, 60f,myEntity, null, myEntity.inventory.holdingItem.ItemTags, true, true, true, true, 1, true);
+
+        float ApproachDistance = MaxRangeForWeapon * .80f;
+
         MaxRangeForWeapon = MaxRangeForWeapon * 2;
         float HoldGroundDistance = (float)MaxRangeForWeapon * 0.80f; // minimum range to hold ground 
         float RetreatDistance = (float)MaxRangeForWeapon * 0.30f; // start retreating at this distance.
         float distanceSq = myTarget.GetDistanceSq(myEntity);
-
+        
         float MinMeleeRange = GetFloatValue(EntityID, "MinimumMeleeRange");
         if (MinMeleeRange == -1)
             MinMeleeRange = 4;
@@ -239,6 +242,11 @@ public static class EntityUtilities
         if (distanceSq <= MinMeleeRange) 
             return false;
 
+        // if the entity is half the distance away, approach
+        if (myEntity.GetDistance(myTarget) > ApproachDistance)
+            return false;
+
+
         // Hold your ground
         if (distanceSq > RetreatDistance && distanceSq <= HoldGroundDistance) // distance greater than 20%  of the range of the weapon
         {
@@ -249,12 +257,7 @@ public static class EntityUtilities
         if (distanceSq > MinMeleeRange && distanceSq <= RetreatDistance )
             BackupHelper(EntityID, myTarget.position, 40);
 
-        if ( distanceSq > ( MaxRangeForWeapon * 2 ) )
-        {
-            DisplayLog(myEntity.EntityName + " Distance is greater than max range. Moving forward... ");
-            return false;
-        }
-
+  
         // if we can't see the target, move closer rather than staying at range.
         if ( !myEntity.CanSee( myTarget ))
         {
@@ -298,7 +301,7 @@ public static class EntityUtilities
         // If you are blocked, try to go to another side.
         //vector = RandomPositionGenerator.CalcAway(myEntity, distance, distance,distance, awayFrom);
         myEntity.moveHelper.SetMoveTo(vector, false);
-
+        myEntity.SetInvestigatePosition(vector, 20);
         // Move away at a hard coded speed of -4 to make them go backwards
       //  myEntity.speedForward = -4f;// Mathf.SmoothStep(myEntity.speedForward, -0.25f, 2 * Time.deltaTime);
 

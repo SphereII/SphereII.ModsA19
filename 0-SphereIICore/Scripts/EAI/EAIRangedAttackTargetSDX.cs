@@ -30,6 +30,13 @@ class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
 
     }
 
+    public override void Update()
+    {
+        if (this.theEntity.HasInvestigatePosition)
+            return;
+        this.theEntity.SetLookPosition(this.entityTarget.getBellyPosition());
+        base.Update();
+    }
 
 
 }
