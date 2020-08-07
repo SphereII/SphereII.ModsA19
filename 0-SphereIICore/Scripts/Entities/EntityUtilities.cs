@@ -242,10 +242,6 @@ public static class EntityUtilities
         if (distanceSq <= MinMeleeRange) 
             return false;
 
-        // if the entity is half the distance away, approach
-        if (myEntity.GetDistance(myTarget) > ApproachDistance)
-            return false;
-
 
         // Hold your ground
         if (distanceSq > RetreatDistance && distanceSq <= HoldGroundDistance) // distance greater than 20%  of the range of the weapon
@@ -264,7 +260,12 @@ public static class EntityUtilities
             DisplayLog(myEntity.EntityName + " I cannot see my target.");
             return false;
         }
-            
+
+
+        //// if the entity is half the distance away, approach
+        if (myEntity.GetDistance(myTarget) > ApproachDistance)
+            return false;
+
         return true;
     }
 
@@ -301,7 +302,10 @@ public static class EntityUtilities
         // If you are blocked, try to go to another side.
         //vector = RandomPositionGenerator.CalcAway(myEntity, distance, distance,distance, awayFrom);
         myEntity.moveHelper.SetMoveTo(vector, false);
-        myEntity.SetInvestigatePosition(vector, 20);
+       
+        //myEntity.SetInvestigatePosition(vector, 20);
+
+
         // Move away at a hard coded speed of -4 to make them go backwards
       //  myEntity.speedForward = -4f;// Mathf.SmoothStep(myEntity.speedForward, -0.25f, 2 * Time.deltaTime);
 
