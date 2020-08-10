@@ -50,6 +50,9 @@ class EntityAliveEventSpawnerSDX : EntityAlive
                         {
                             foreach (String strEntity in strValue.Split(','))
                                 SpawnEntity(EntityClass.FromString(strEntity), false);
+
+                            // If we spawn in each entity, break, as we don't want multiple spawns.
+                            break;
                         }
                         else  //  Spawn from Entity Group
                         {
