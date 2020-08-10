@@ -118,12 +118,15 @@ public static class EntityUtilities
                 // Ranged
                 case Need.Ranged:
                     index = FindItemWithAction(EntityID, typeof(ItemActionRanged));
+                    myEntity.emodel.avatarController.CrippleLimb(EnumBodyPartHit.LeftUpperArm, true);
                     break;
                 // Ranged
                 case Need.Melee:
                     index = FindItemWithAction(EntityID, typeof(ItemActionMelee));
-                    //if (index == 0)
-                    //    index = FindItemWithAction(EntityID, typeof(ItemActionDynamicMelee));
+                    if (index == 0)
+                        index = FindItemWithAction(EntityID, typeof(ItemActionDynamicMelee));
+
+                    myEntity.emodel.avatarController.CrippleLimb(EnumBodyPartHit.LeftUpperArm, false);
                     break;
             }
         }
@@ -224,8 +227,6 @@ public static class EntityUtilities
         //   Retreat distance is 20%, so 20
         float MaxRangeForWeapon = EffectManager.GetValue(PassiveEffects.MaxRange, myEntity.inventory.holdingItemItemValue, 60f,myEntity, null, myEntity.inventory.holdingItem.ItemTags, true, true, true, true, 1, true);
 
-        float ApproachDistance = MaxRangeForWeapon * .80f;
-
         MaxRangeForWeapon = MaxRangeForWeapon * 2;
         float HoldGroundDistance = (float)MaxRangeForWeapon * 0.80f; // minimum range to hold ground 
         float RetreatDistance = (float)MaxRangeForWeapon * 0.30f; // start retreating at this distance.
@@ -262,8 +263,8 @@ public static class EntityUtilities
         }
 
 
-        //// if the entity is half the distance away, approach
-        if (myEntity.GetDistance(myTarget) > ApproachDistance)
+        // if the entity is half the distance away, approach
+        if (distanceSq > 200)
             return false;
 
         return true;
@@ -303,7 +304,7 @@ public static class EntityUtilities
         //vector = RandomPositionGenerator.CalcAway(myEntity, distance, distance,distance, awayFrom);
         myEntity.moveHelper.SetMoveTo(vector, false);
        
-        //myEntity.SetInvestigatePosition(vector, 20);
+        myEntity.SetInvestigatePosition(vector, 20);
 
 
         // Move away at a hard coded speed of -4 to make them go backwards

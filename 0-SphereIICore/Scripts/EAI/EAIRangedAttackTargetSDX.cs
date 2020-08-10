@@ -8,9 +8,6 @@ class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
 {
     public override void Start()
     {
-        // Make sure its using its ranged weapon.
-        EntityUtilities.ChangeHandholdItem(theEntity.entityId, EntityUtilities.Need.Ranged);
-
         base.Start();
 
         // Face the entity; no trick shots!
@@ -18,14 +15,23 @@ class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
             this.theEntity.RotateTo(this.entityTarget, 45f, 45f);
     }
 
+    public override void Reset()
+    {
+        base.Reset();
+     //   EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Ranged);
+
+    }
     public override bool Continue()
     {
         bool result = base.Continue();
 
-        // If the enemy is dead, reset its hand items
-        if (this.entityTarget.IsDead())
-            EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Reset);
+        //// If the enemy is dead, reset its hand items
+        //if (this.entityTarget.IsDead())
+        //    EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Ranged);
 
+        //// Make sure its using its ranged weapon.
+        //if ( result )
+        //     EntityUtilities.ChangeHandholdItem(theEntity.entityId, EntityUtilities.Need.Ranged);
         return result;
 
     }
@@ -34,7 +40,6 @@ class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
     {
         //if (this.theEntity.HasInvestigatePosition)
         //    return;
-        this.theEntity.SetLookPosition(this.entityTarget.getBellyPosition());
         base.Update();
     }
 

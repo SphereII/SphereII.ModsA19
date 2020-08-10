@@ -539,7 +539,20 @@ public class EntityAliveSDX : EntityNPC
 
             SetLookPosition(target.getHeadPosition());
             RotateTo(target, 45, 45);
+
+            if (EntityUtilities.HasTask(this.entityId, "Ranged"))
+            {
+                if (EntityUtilities.CheckAIRange(this.entityId, target.entityId))
+                    EntityUtilities.ChangeHandholdItem(this.entityId, EntityUtilities.Need.Ranged);
+                else
+                    EntityUtilities.ChangeHandholdItem(this.entityId, EntityUtilities.Need.Melee);
+            }
+            else
+            {
+                EntityUtilities.ChangeHandholdItem(this.entityId, EntityUtilities.Need.Melee);
+            }
         }
+    
         Buffs.RemoveBuff("buffnewbiecoat", false);
         Stats.Health.MaxModifier = Stats.Health.Max;
 
@@ -674,6 +687,7 @@ public class EntityAliveSDX : EntityNPC
         Buffs.AddBuff("buffNotifyTeamAttack", -1, true);
 
     }
+
 
     public new void SetAttackTarget(EntityAlive _attackTarget, int _attackTargetTime)
     {

@@ -14,6 +14,14 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
         if (blDisplayLog)
             Debug.Log(this.GetType() + " : " + this.theEntity.EntityName + ": " + this.theEntity.entityId + ": " + strMessage);
     }
+
+    
+    public override void Start()
+    {
+        base.Start();
+        EntityUtilities.ChangeHandholdItem(theEntity.entityId, EntityUtilities.Need.Melee);
+
+    }
     public override bool CanExecute()
     {
         bool result = base.CanExecute();
@@ -35,9 +43,6 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
                     result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
 
             }
-
-            if ( result )
-                EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Melee);
         }
         return result;
     }
@@ -52,17 +57,24 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
             this.theEntity.IsEating = false;
             this.theEntity.SetAttackTarget(null, 0);
             this.theEntity.SetRevengeTarget(null);
-            EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Reset);
-
             return false;
         }
 
+
         if (result)
         {
+
+            
             // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
             if (EntityUtilities.HasTask(this.theEntity.entityId, "Ranged"))
-                    return !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
+                    result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
         }
+
+        if ( !result )
+            return result;
+
+        EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Melee);
+
 
         return result;
     }

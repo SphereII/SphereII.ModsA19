@@ -106,7 +106,7 @@ class EAIWanderSDX : EAIWander
         //    //Give them more time to path find.The CanContinue() stops at 30f, so we'll set it at -90, rather than 0.
         //    this.time = 90f;
         //}
-     //   EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Melee);
+        EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Reset);
         // Path finding has to be set for Breaking Blocks so it can path through doors
         PathFinderThread.Instance.FindPath(this.theEntity, this.position, this.theEntity.GetMoveSpeed(), true, this);
         return;
