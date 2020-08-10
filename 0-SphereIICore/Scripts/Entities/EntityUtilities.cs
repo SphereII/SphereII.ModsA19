@@ -231,7 +231,7 @@ public static class EntityUtilities
         
         float MinMeleeRange = GetFloatValue(EntityID, "MinimumMeleeRange");
         if (MinMeleeRange == -1)
-            MinMeleeRange = 4;
+            MinMeleeRange = 2;
 
         DisplayLog(myEntity.EntityName  + " Max Range: " + MaxRangeForWeapon + " Hold Ground: " + HoldGroundDistance + " Retreatdistance: " + RetreatDistance + " Entity Distance: " + distanceSq);
 
