@@ -118,15 +118,12 @@ public static class EntityUtilities
                 // Ranged
                 case Need.Ranged:
                     index = FindItemWithAction(EntityID, typeof(ItemActionRanged));
-                    myEntity.emodel.avatarController.CrippleLimb(EnumBodyPartHit.LeftUpperArm, true);
                     break;
                 // Ranged
                 case Need.Melee:
                     index = FindItemWithAction(EntityID, typeof(ItemActionMelee));
                     if (index == 0)
                         index = FindItemWithAction(EntityID, typeof(ItemActionDynamicMelee));
-
-                    myEntity.emodel.avatarController.CrippleLimb(EnumBodyPartHit.LeftUpperArm, false);
                     break;
             }
         }
