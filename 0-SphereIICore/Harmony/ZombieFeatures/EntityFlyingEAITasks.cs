@@ -81,12 +81,12 @@ class SphereII_EntityFlyingEAITasks
                 __instance.pendingDistraction = null;
             }
 
-
-            // Use the aggo cool down to do a range check on the weapons.
+        // Use the aggo cool down to do a range check on the weapons.
             if (___aggroCooldown <= 0)
             {
                 ___aggroCooldown = 20;
-                EntityUtilities.CheckAIRange(__instance.entityId, EntityUtilities.GetAttackOrReventTarget(__instance.entityId).entityId);
+                if (EntityUtilities.GetAttackOrReventTarget(__instance.entityId) != null)
+                    EntityUtilities.CheckAIRange(__instance.entityId, EntityUtilities.GetAttackOrReventTarget(__instance.entityId).entityId);
             }
             return true;
         }
