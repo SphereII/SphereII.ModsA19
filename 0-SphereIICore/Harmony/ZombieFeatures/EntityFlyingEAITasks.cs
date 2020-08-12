@@ -32,7 +32,7 @@ class SphereII_EntityFlyingEAITasks
     [HarmonyPatch("updateTasks")]
     public class SphereII_EntityFlyingEAITasks_UpdateTask
     {
-        public static bool Prefix(EntityAlive __instance, Context ___utilityAIContext, EntitySeeCache ___seeCache, EntityLookHelper ___lookHelper)
+        public static bool Prefix(EntityHornet __instance, Context ___utilityAIContext, EntitySeeCache ___seeCache, EntityLookHelper ___lookHelper, ref int ___aggroCooldown)
         {
 
             if (!__instance.HasAnyTags(FastTags.Parse("allowEAI")))
@@ -81,10 +81,14 @@ class SphereII_EntityFlyingEAITasks
                 __instance.pendingDistraction = null;
             }
 
-            if (EntityUtilities.GetAttackOrReventTarget( __instance.entityId) == null)
-                return true;
 
-            return false;
+            // Use the aggo cool down to do a range check on the weapons.
+            if (___aggroCooldown <= 0)
+            {
+                ___aggroCooldown = 20;
+                EntityUtilities.CheckAIRange(__instance.entityId, EntityUtilities.GetAttackOrReventTarget(__instance.entityId).entityId);
+            }
+            return true;
         }
 
     }
