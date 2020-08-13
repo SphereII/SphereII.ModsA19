@@ -38,7 +38,6 @@ class SphereII_EntityFlyingEAITasks
             if (!__instance.HasAnyTags(FastTags.Parse("allowEAI")))
                 return true;
 
-
             if (GamePrefs.GetBool(EnumGamePrefs.DebugStopEnemiesMoving))
             {
                 __instance.SetMoveForwardWithModifiers(0f, 0f, false);
@@ -48,6 +47,10 @@ class SphereII_EntityFlyingEAITasks
                 }
                 return true;
             }
+
+            if (__instance.GetAttackTarget() != null)
+                __instance.SetRevengeTarget(__instance.GetAttackTarget());
+
             __instance.CheckDespawn();
             ___seeCache.ClearIfExpired();
             using (ProfilerUsingFactory.Profile("entities.live.ai.manager"))
@@ -81,13 +84,6 @@ class SphereII_EntityFlyingEAITasks
                 __instance.pendingDistraction = null;
             }
 
-        // Use the aggo cool down to do a range check on the weapons.
-            if (___aggroCooldown <= 0)
-            {
-                ___aggroCooldown = 20;
-                if (EntityUtilities.GetAttackOrReventTarget(__instance.entityId) != null)
-                    EntityUtilities.CheckAIRange(__instance.entityId, EntityUtilities.GetAttackOrReventTarget(__instance.entityId).entityId);
-            }
             return true;
         }
 
