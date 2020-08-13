@@ -33,6 +33,9 @@ public class SphereII_RandomSize
         {
             bool bRandomSize = false;
 
+            if (entity.isEntityRemote)
+                return false;
+
             if (entity is EntityZombie)
             {
                 AdvLogging.DisplayLog(AdvFeatureClass, " Random Size: Is A Zombie. Random size is true");
@@ -60,6 +63,8 @@ public class SphereII_RandomSize
             {
                 if (__instance is EntityPlayerLocal)
                     return;
+
+                
 
                 if (RandomSizeHelper.AllowedRandomSize(__instance))
                 {
