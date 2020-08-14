@@ -268,20 +268,20 @@ class MecanimSDX : AvatarController
         SetTrigger("Raging");
     }
 
-    // Logic to handle electrocution
-    public override bool IsAnimationElectrocutedPlaying()
-    {
-        return IsElectrocuting;
-    }
-    public override void StartAnimationElectrocuted()
-    {
-        if(!IsAnimationElectrocutedPlaying())
-        {
-            IsElectrocuting = true;
-            SetRandomIndex("ElectrocutionIndex");
-            SetTrigger("Electrocution");
-        }
-    }
+    // Logic to handle electrocution A19 b180
+    //public override bool IsAnimationElectrocutedPlaying()
+    //{
+    //    return IsElectrocuting;
+    //}
+    //public override void StartAnimationElectrocuted()
+    //{
+    //    if(!IsAnimationElectrocutedPlaying())
+    //    {
+    //        IsElectrocuting = true;
+    //        SetRandomIndex("ElectrocutionIndex");
+    //        SetTrigger("Electrocution");
+    //    }
+    //}
 
     public override bool IsAnimationHarvestingPlaying()
     {
