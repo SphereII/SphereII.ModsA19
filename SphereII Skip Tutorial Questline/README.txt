@@ -1,3 +1,2 @@
-Birday Stream
 -------------
 - Cuts the starter quest chain to just point to trader, skipping the rest.
