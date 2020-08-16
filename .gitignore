@@ -18,3 +18,4 @@ obj/Release/*
 2-CharacterEffectsPack
 2-NoSpawning
 2-NPCFactions
+!Mono*.dll
