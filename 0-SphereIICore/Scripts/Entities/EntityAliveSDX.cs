@@ -411,7 +411,14 @@ public class EntityAliveSDX : EntityNPC
         GuardPosition = ModGeneralUtilities.StringToVector3(strGuardPosition);
         factionId = _br.ReadByte();
         GuardLookPosition = ModGeneralUtilities.StringToVector3(_br.ReadString());
-
+        try
+        {
+            this.Buffs.Read(_br);
+        }
+        catch (Exception ex)
+        {
+            // fail safe to protect game saves
+        }
 
 
     }
@@ -430,6 +437,14 @@ public class EntityAliveSDX : EntityNPC
         _bw.Write(GuardPosition.ToString());
         _bw.Write(factionId);
         _bw.Write(GuardLookPosition.ToString());
+        try
+        {
+            this.Buffs.Write(_bw, false);
+        }
+        catch(Exception ex)
+        {
+            // fail safe to protect game saves
+        }
     }
 
 
