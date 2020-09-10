@@ -473,8 +473,7 @@ class EAILootLocationSDX : EAIApproachSpot
         }
     }
 
-    // Token: 0x06002E3B RID: 11835 RVA: 0x001422B4 File Offset: 0x001404B4
-    private new void updatePath()
+    private void updatePath()
     {
         if (!PathFinderThread.Instance.IsCalculatingPath(this.theEntity.entityId))
         {

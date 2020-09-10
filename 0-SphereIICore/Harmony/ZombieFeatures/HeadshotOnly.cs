@@ -36,6 +36,10 @@ public class SphereII_HeadshotOnly
                 }
                 if (Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
                 {
+                    // If its not a player, deal with default
+                    EntityPlayerLocal entityAlive = GameManager.Instance.World.GetEntity(_damageSource.getEntityId()) as EntityPlayerLocal;
+                    if (entityAlive == null)
+                        return true;
 
                     EnumBodyPartHit bodyPart = _damageSource.GetEntityDamageBodyPart(__instance);
                     if (bodyPart == EnumBodyPartHit.Head)

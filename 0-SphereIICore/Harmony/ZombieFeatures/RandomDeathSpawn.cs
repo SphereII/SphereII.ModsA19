@@ -29,7 +29,7 @@ public class SphereII_RandomDeathSpawn
             if (entityClass.Properties.Values.ContainsKey("SpawnOnDeath"))
             {
                 // Spawn location
-                Vector3i blockPos = default(Vector3i);
+                Vector3i blockPos;
                 blockPos.x = (int)__instance.position.x;
                 blockPos.y = (int)__instance.position.y;
                 blockPos.z = (int)__instance.position.z;

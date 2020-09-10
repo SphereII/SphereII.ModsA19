@@ -41,6 +41,15 @@ public static class EntityUtilities
         Reset = 5
     }
 
+
+    public static Vector3 CenterPosition(Vector3 position)
+    {
+        Vector3 temp = position;
+        temp.x = 0.5f + Utils.Fastfloor(position.x);
+        temp.z = 0.5f + Utils.Fastfloor(position.z);
+        temp.y = Utils.Fastfloor(position.y);
+        return temp;
+    }
     public static bool IsHuman(int EntityID)
     {
         EntityAlive myEntity = GameManager.Instance.World.GetEntity(EntityID) as EntityAlive;
@@ -130,7 +139,7 @@ public static class EntityUtilities
         else
             index = Preferred;
 
-       
+
         // If there's no change, don't do anything.
         if (myEntity.inventory.holdingItemIdx == index)
             return index;
@@ -143,7 +152,7 @@ public static class EntityUtilities
 
         //myEntity.inventory.SetHoldingItemIdx(index);
         myEntity.inventory.ForceHoldingItemUpdate();
-      //  myEntity.emodel.SwitchModelAndView(myEntity.emodel.IsFPV, myEntity.IsMale);
+        //  myEntity.emodel.SwitchModelAndView(myEntity.emodel.IsFPV, myEntity.IsMale);
         return index;
 
     }
@@ -187,7 +196,7 @@ public static class EntityUtilities
                 continue;
             if (stack.itemValue == null)
                 continue;
-            if ( stack.itemValue.ItemClass == null )
+            if (stack.itemValue.ItemClass == null)
                 continue;
             if (stack.itemValue.ItemClass.Actions == null)
                 continue;
@@ -222,22 +231,22 @@ public static class EntityUtilities
         // Example Range:  50
         //   Hold Ground Distance between 20 to 50 
         //   Retreat distance is 20%, so 20
-        float MaxRangeForWeapon = EffectManager.GetValue(PassiveEffects.MaxRange, myEntity.inventory.holdingItemItemValue, 60f,myEntity, null, myEntity.inventory.holdingItem.ItemTags, true, true, true, true, 1, true);
+        float MaxRangeForWeapon = EffectManager.GetValue(PassiveEffects.MaxRange, myEntity.inventory.holdingItemItemValue, 60f, myEntity, null, myEntity.inventory.holdingItem.ItemTags, true, true, true, true, 1, true);
 
         MaxRangeForWeapon = MaxRangeForWeapon * 2;
         float HoldGroundDistance = (float)MaxRangeForWeapon * 0.80f; // minimum range to hold ground 
         float RetreatDistance = (float)MaxRangeForWeapon * 0.30f; // start retreating at this distance.
         float distanceSq = myTarget.GetDistanceSq(myEntity);
-        
+
         float MinMeleeRange = GetFloatValue(EntityID, "MinimumMeleeRange");
         if (MinMeleeRange == -1)
             MinMeleeRange = 2;
 
-        DisplayLog(myEntity.EntityName  + " Max Range: " + MaxRangeForWeapon + " Hold Ground: " + HoldGroundDistance + " Retreatdistance: " + RetreatDistance + " Entity Distance: " + distanceSq);
+        DisplayLog(myEntity.EntityName + " Max Range: " + MaxRangeForWeapon + " Hold Ground: " + HoldGroundDistance + " Retreatdistance: " + RetreatDistance + " Entity Distance: " + distanceSq);
 
 
         // if they are too close, switch to melee
-        if (distanceSq <= MinMeleeRange) 
+        if (distanceSq <= MinMeleeRange)
             return false;
 
 
@@ -248,12 +257,12 @@ public static class EntityUtilities
             Stop(EntityID);
         }
         // Back away!
-        if (distanceSq > MinMeleeRange && distanceSq <= RetreatDistance )
+        if (distanceSq > MinMeleeRange && distanceSq <= RetreatDistance)
             BackupHelper(EntityID, myTarget.position, 40);
 
-  
+
         // if we can't see the target, move closer rather than staying at range.
-        if ( !myEntity.CanSee( myTarget ))
+        if (!myEntity.CanSee(myTarget))
         {
             DisplayLog(myEntity.EntityName + " I cannot see my target.");
             return false;
@@ -273,13 +282,13 @@ public static class EntityUtilities
         if (myEntity == null)
             return;
 
-        if ( myEntity.moveHelper != null )
+        if (myEntity.moveHelper != null)
             myEntity.moveHelper.Stop();
 
-        if ( myEntity.navigator != null )
+        if (myEntity.navigator != null)
             myEntity.navigator.clearPath();
 
-        
+
         myEntity.speedForward = 0;
 
     }
@@ -300,15 +309,15 @@ public static class EntityUtilities
         // If you are blocked, try to go to another side.
         //vector = RandomPositionGenerator.CalcAway(myEntity, distance, distance,distance, awayFrom);
         myEntity.moveHelper.SetMoveTo(vector, false);
-       
+
         myEntity.SetInvestigatePosition(vector, 20);
 
 
         // Move away at a hard coded speed of -4 to make them go backwards
-      //  myEntity.speedForward = -4f;// Mathf.SmoothStep(myEntity.speedForward, -0.25f, 2 * Time.deltaTime);
+        //  myEntity.speedForward = -4f;// Mathf.SmoothStep(myEntity.speedForward, -0.25f, 2 * Time.deltaTime);
 
         // Keep them facing the spot
-        myEntity.SetLookPosition( awayFrom );
+        myEntity.SetLookPosition(awayFrom);
         myEntity.RotateTo(awayFrom.x, awayFrom.y, awayFrom.z, 30f, 30f);
     }
 
@@ -361,6 +370,7 @@ public static class EntityUtilities
 
         return false;
     }
+
     public static bool Hire(int EntityID, EntityPlayerLocal _player)
     {
         DisplayLog("Hire()");
@@ -665,8 +675,21 @@ public static class EntityUtilities
                 GameManager.ShowTooltipWithAlert(player as EntityPlayerLocal, myEntity.ToString() + "\n\n\n\n\n", "ui_denied");
                 AdvLogging.DisplayLog(AdvFeatureClass, "\n\nBuffs:");
                 foreach (var Buff in myEntity.Buffs.ActiveBuffs)
+                {
+                    Debug.Log("Buff: " + Buff.BuffName + " ");
                     AdvLogging.DisplayLog(AdvFeatureClass, "\t" + Buff.BuffName);
+                }
 
+                int wvar = 0;
+                myEntity.emodel.avatarController.TryGetInt("WVar", out wvar);
+                Debug.Log("WVar: " + wvar);
+                Debug.Log("CVar Human Walk Types: " + myEntity.Buffs.GetCustomVar("HumanWalkTypes"));
+                myEntity.emodel.avatarController.TryGetInt("IsHuman", out wvar);
+                Debug.Log("IsHuman: " + wvar);
+
+                float temp = 0f;
+                myEntity.emodel.avatarController.TryGetFloat("IVar", out temp);
+                Debug.Log("Ivar: " + temp);
                 AdvLogging.DisplayLog(AdvFeatureClass, myEntity.ToString());
                 AdvLogging.DisplayLog(AdvFeatureClass, "Body Damage: ");
                 AdvLogging.DisplayLog(AdvFeatureClass, "\t Has Right Leg? " + myEntity.bodyDamage.HasRightLeg);
@@ -745,6 +768,8 @@ public static class EntityUtilities
                 AdvLogging.DisplayLog(AdvFeatureClass, strDisplay + " Done with Order");
 
                 break;
+
+
             case "Hire":
                 AdvLogging.DisplayLog(AdvFeatureClass, strDisplay + " Opening Hire ");
                 bool result = Hire(EntityID, player as EntityPlayerLocal);
@@ -753,12 +778,8 @@ public static class EntityUtilities
                 break;
             case "OpenInventory":
                 AdvLogging.DisplayLog(AdvFeatureClass, strDisplay + " Setting Order Open Inventory");
-
-                //      GameManager.Instance.TELockServer(0, myEntity.GetBlockPosition(), EntityID, player.entityId);
-                //       uiforPlayer.windowManager.CloseAllOpenWindows(null, false);
                 if (myEntity.lootContainer == null)
                     AdvLogging.DisplayLog(AdvFeatureClass, strDisplay + " Loot Container is null");
-
                 else
                 {
                     AdvLogging.DisplayLog(AdvFeatureClass, strDisplay + " Loot Container: " + myEntity.lootContainer.ToString());
@@ -811,7 +832,7 @@ public static class EntityUtilities
                 }
 
                 // I have an attack target, so don't keep doing your current task
-                DisplayLog("CanExecuteTask(): I have an Attack Target: " + myEntity.GetAttackTarget().ToString() );
+                DisplayLog("CanExecuteTask(): I have an Attack Target: " + myEntity.GetAttackTarget().ToString());
                 return false;
 
             }
@@ -824,7 +845,7 @@ public static class EntityUtilities
                     myEntity.SetRevengeTarget(null);
                     return true;
                 }
-                 DisplayLog("CanExecuteTask(): I have a Revenge Target: " + myEntity.GetRevengeTarget().ToString());
+                DisplayLog("CanExecuteTask(): I have a Revenge Target: " + myEntity.GetRevengeTarget().ToString());
                 return false;
 
             }
@@ -837,7 +858,7 @@ public static class EntityUtilities
                     if (myEntity.moveHelper != null)
                     {
                         myEntity.moveHelper.Stop();
-                           DisplayLog(" Too Close to leader. Moving to Look Vector");
+                        DisplayLog(" Too Close to leader. Moving to Look Vector");
                         myEntity.moveHelper.SetMoveTo((leader as EntityAlive).GetLookVector(), false);
 
                     }
@@ -916,16 +937,14 @@ public static class EntityUtilities
         return result;
     }
 
-    public static Vector3 GetNewPositon(int EntityID, int maxBlocks = 30)
+    public static Vector3 GetNewPositon(int EntityID, bool Random = false)
     {
         EntityAlive myEntity = GameManager.Instance.World.GetEntity(EntityID) as EntityAlive;
         if (myEntity == null)
             return Vector3.zero;
 
-        if (!EntityUtilities.CheckProperty(EntityID, "PathingBlocks"))
-            return Vector3.zero;
 
-            Vector3 result = Vector3.zero;
+        Vector3 result = Vector3.zero;
         List<Vector3> Paths = SphereCache.GetPaths(EntityID);
         if (Paths == null || Paths.Count == 0)
         {
@@ -933,30 +952,33 @@ public static class EntityUtilities
             //    <property name="PathingBlocks" value="PathingCube" />
             List<string> Blocks = EntityUtilities.ConfigureEntityClass(EntityID, "PathingBlocks");
             if (Blocks.Count == 0)
-            {
-                // DisplayLog("No Blocks configured. Setting Default", __instance.theEntity);
-               // Blocks.Add("PathingCube");
-                return result;
-            }
+                Blocks.Add("PathingCube");
 
             //Scan for the blocks in the area
-            List<Vector3> PathingVectors = ModGeneralUtilities.ScanForBlockInListHelper(myEntity.position, Blocks, maxBlocks);
-            if (PathingVectors.Count == 0)
+            List<Vector3> PathingVectors = ModGeneralUtilities.ScanForTileEntityInChunksListHelper(myEntity.position, Blocks, EntityID);
+            if (PathingVectors == null || PathingVectors.Count == 0)
                 return result;
 
             //Add to the cache
             SphereCache.AddPaths(EntityID, PathingVectors);
         }
 
-        Vector3 newposition = SphereCache.GetRandomPath(EntityID);
-        if (newposition == Vector3.zero)
-            return result;
-
+        // Finds the closet block we matched with.
+        Vector3 tMin = new Vector3();
+        if (Random)
+        {
+            tMin = SphereCache.GetRandomPath(EntityID);
+        }
+        else
+        {
+            tMin = ModGeneralUtilities.FindNearestBlock(myEntity.position, SphereCache.GetPaths(EntityID));
+            if (tMin == Vector3.zero)
+                return tMin;
+        }
         // Remove it from the cache.
-        SphereCache.RemovePath(EntityID, newposition);
+        SphereCache.RemovePath(EntityID, tMin);
 
-        result = GameManager.Instance.World.FindSupportingBlockPos(newposition);
-        //Debug.Log("Position: " + result);
+        result = GameManager.Instance.World.FindSupportingBlockPos(tMin);
         // Center the pathing position.
         result.x = (float)Utils.Fastfloor(result.x) + 0.5f;
         result.y = (float)Utils.Fastfloor(result.y) + 0.5f;
@@ -989,6 +1011,7 @@ public static class EntityUtilities
             }
         }
     }
+
 
     public static bool GetBoolValue(int EntityID, String strProperty)
     {
