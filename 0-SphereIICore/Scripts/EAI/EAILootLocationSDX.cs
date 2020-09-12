@@ -462,7 +462,7 @@ class EAILootLocationSDX : EAIApproachSpot
         if (path != null)
         {
             this.hadPath = true;
-            this.theEntity.moveHelper.CalcIfUnreachablePos(this.seekPos);
+            this.theEntity.moveHelper.CalcIfUnreachablePos();
         }
         Vector3 lookPosition = this.investigatePos;
         lookPosition.y += 0.8f;

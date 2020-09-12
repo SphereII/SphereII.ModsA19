@@ -16,7 +16,7 @@ public class EAIApproachAndFollowTargetSDX : EAIApproachAndAttackTarget
     //  public EntityAliveSDX entityAliveSDX;
 
     private bool blDisplayLog = false;
-    private EntityAlive entityTarget;
+    private new EntityAlive entityTarget;
     private bool isTargetToEat;
 
     private bool Stop = false;
@@ -280,7 +280,7 @@ public class EAIApproachAndFollowTargetSDX : EAIApproachAndAttackTarget
             return;
         }
 
-        this.theEntity.moveHelper.CalcIfUnreachablePos(this.entityTargetPos);
+        this.theEntity.moveHelper.CalcIfUnreachablePos();
 
         // if the entity is not calculating a path, check how many nodes are left, and reset the path counter if its too low.
         if (!PathFinderThread.Instance.IsCalculatingPath(this.theEntity.entityId))
