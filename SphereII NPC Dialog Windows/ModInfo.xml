@@ -4,9 +4,9 @@
     <Name value="SphereII NPC Dialog Windows" />
     <Description value="Add new dialog windows for NPCs. Early loading for over-ride" />
     <Author value="sphereii" />
-    <Version value="19.1.1.1" />
+    <Version value="19.1.1.4" />
   </ModInfo>
-  <DMT Hash="387d2b927dfb4ace55453e99d9077f1e">
+  <DMT Hash="1c469d3ef4a07f5fda129117aae9ba5c">
     <dependencies>
       <dependancy>0-SphereIICore</dependancy>
     </dependencies>

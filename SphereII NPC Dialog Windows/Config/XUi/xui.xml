@@ -22,5 +22,14 @@
     <window_group name="EntityInformation" >
       <window name="windowEntityInformationPanel" anchor="CenterTop"/>
     </window_group>
+
+    <window_group name="SetCode" >
+      <window name="windowPathFindingKeypad"/>
+    </window_group>
+
+    <window_group name="LockPicking" >
+      <window name="windowLockPicking"/>
+    </window_group>
+
   </append>
 </configs>
