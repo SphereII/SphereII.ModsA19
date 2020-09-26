@@ -46,9 +46,6 @@ public class SphereII_RemoveTraderProtection
             {
                 if (_bad != null)
                     _bad.bTraderArea = false;
-
-                if (_bad.PrefabName.Contains("trader_hugh"))
-                    _bad.bTraderArea = true;
             }
             return true;
         }
@@ -65,8 +62,6 @@ public class SphereII_RemoveTraderProtection
                 return;
 
             __instance.bTraderArea = false;
-            if (__instance.PrefabName.Contains("trader_hugh"))
-                __instance.bTraderArea = true;
 
 
         }
