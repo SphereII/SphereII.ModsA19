@@ -1,9 +1,5 @@
-using DMT;
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.IO;
-using UnityEngine;
 
 
 /**
@@ -24,8 +20,8 @@ using UnityEngine;
  */
 public class SphereII_Transmogrifier
 {
-    private static string AdvFeatureClass = "AdvancedZombieFeatures";
-    private static string Feature = "RandomWalk";
+    private static readonly string AdvFeatureClass = "AdvancedZombieFeatures";
+    private static readonly string Feature = "RandomWalk";
 
     [HarmonyPatch(typeof(EntityAlive))]
     [HarmonyPatch("CopyPropertiesFromEntityClass")]

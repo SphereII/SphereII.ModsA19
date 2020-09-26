@@ -1,7 +1,4 @@
 using HarmonyLib;
-using System.Reflection;
-using UnityEngine;
-using DMT;
 
 
 
@@ -14,8 +11,8 @@ using DMT;
 [HarmonyPatch("AddIconNotification")]
 public class SphereII_XPIconRemover
 {
-    private static string AdvFeatureClass = "AdvancedUI";
-    private static string Feature = "DisableXPIconNotification";
+    private static readonly string AdvFeatureClass = "AdvancedUI";
+    private static readonly string Feature = "DisableXPIconNotification";
 
     static bool Prefix()
     {

@@ -1,9 +1,5 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.Reflection;
 using System.Xml;
-using UnityEngine;
 
 /**
  * SphereII_DialogFromXML_Extensions
@@ -22,7 +18,7 @@ public class SphereII_DialogFromXML_Extensions
     [HarmonyPatch("ParseRequirement")]
     public class SphereII__DialogFromXML_ParseRequirement
     {
-        static void Postfix( BaseDialogRequirement __result, XmlElement e)
+        static void Postfix(BaseDialogRequirement __result, XmlElement e)
         {
             if (__result is DialogRequirementHasCVarSDX)
             {
@@ -32,7 +28,7 @@ public class SphereII_DialogFromXML_Extensions
 
             if (__result is DialogRequirementHasBuffSDX)
             {
-                if(e.HasAttribute("match"))
+                if (e.HasAttribute("match"))
                     (__result as DialogRequirementHasBuffSDX).strMatch = e.GetAttribute("match");
             }
 
@@ -58,5 +54,5 @@ public class SphereII_DialogFromXML_Extensions
         }
     }
 
-  
+
 }

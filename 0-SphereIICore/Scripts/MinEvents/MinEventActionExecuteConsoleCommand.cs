@@ -5,7 +5,6 @@
 public class MinEventActionExecuteConsoleCommand : MinEventActionBase
 {
     string command;
-    ClientInfo _cInfo;
     public override void Execute(MinEventParams _params)
     {
         if (command == null)
@@ -30,7 +29,7 @@ public class MinEventActionExecuteConsoleCommand : MinEventActionBase
         bool xmlAttribute = base.ParseXmlAttribute(_attribute);
         if (xmlAttribute || !(_attribute.Name == "command"))
             return xmlAttribute;
-        this.command = _attribute.Value;
+        command = _attribute.Value;
         return true;
     }
 }

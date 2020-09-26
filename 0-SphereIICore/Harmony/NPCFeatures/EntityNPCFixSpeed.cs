@@ -1,8 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
 using UnityEngine;
 
 
@@ -14,8 +10,8 @@ using UnityEngine;
 class EntityNPCSpeedFix
 {
 
-    private static string AdvFeatureClass = "AdvancedNPCFeatures";
-    private static string Feature = "NPCSpeedFix";
+    private static readonly string AdvFeatureClass = "AdvancedNPCFeatures";
+    private static readonly string Feature = "NPCSpeedFix";
 
     [HarmonyPatch(typeof(EntityNPC))]
     [HarmonyPatch("updateSpeedForwardAndStrafe")]

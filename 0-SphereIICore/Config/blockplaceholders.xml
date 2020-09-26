@@ -10,8 +10,8 @@
       <block name="rock06" prob=".001"/>
       <block name="terrGravel" prob=".001"/>
       <block name="rock_form02" prob=".001"/>
-      <block name="driftwood2" prob=".001"/>
-      <block name="driftwood" prob=".001"/>
+      <block name="driftwood2" prob=".005"/>
+      <block name="driftwood" prob=".005"/>
       <block name="decoCowSkull" prob=".0001"/>
       <block name="bodyBagPile" prob=".0001"/>
       <block name="bodyBagBlackFlies" prob=".0001"/>
@@ -27,7 +27,8 @@
       <block name="stalagmite04" prob=".001"/>
       <block name="mushroom01" prob=".001"/>
       <block name="mushroom02" prob=".001"/>
-      <block name="caveBlock02" />
+
+      <block name="air" />
     </placeholder>
 
     <placeholder name="cntDeepCaveFloorRandomLootHelper">
@@ -55,8 +56,10 @@
       <block name="stalagmite02" prob=".001"/>
       <block name="stalagmite03" prob=".001"/>
       <block name="stalagmite04" prob=".001"/>
-      
-      <block name="caveBlock02" />
+      <block name="driftwood" prob=".001"/>
+      <block name="driftwood2" prob=".001"/>
+
+      <block name="air" />
     </placeholder>
     
     
@@ -67,7 +70,7 @@
       <block name="stalactite02" prob=".006"/>
       <block name="stalactite03" prob=".006"/>
       <block name="stalactite04" prob=".006"/>
-      <block name="caveBlock02"/>
+      <block name="air" />
     </placeholder>
     
 

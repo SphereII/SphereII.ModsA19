@@ -1,6 +1,5 @@
 ﻿
 // General Purpose Entity Utilities to centralize general checks.
-using GamePath;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -8,8 +7,8 @@ using UnityEngine;
 
 public static class EntityUtilities
 {
-    static bool blDisplayLog = false;
-    private static string AdvFeatureClass = "AdvancedNPCFeatures";
+    static readonly bool blDisplayLog = false;
+    private static readonly string AdvFeatureClass = "AdvancedNPCFeatures";
 
 
     public static void DisplayLog(string strMessage)
@@ -381,7 +380,7 @@ public static class EntityUtilities
 
         DisplayLog("Hire(): I have an entity");
 
-        LocalPlayerUI uiforPlayer = LocalPlayerUI.GetUIForPlayer(_player as EntityPlayerLocal);
+        LocalPlayerUI uiforPlayer = LocalPlayerUI.GetUIForPlayer(_player);
         if (uiforPlayer)
         {
             DisplayLog("Hire(): I have a player.");
@@ -980,9 +979,9 @@ public static class EntityUtilities
 
         result = GameManager.Instance.World.FindSupportingBlockPos(tMin);
         // Center the pathing position.
-        result.x = (float)Utils.Fastfloor(result.x) + 0.5f;
-        result.y = (float)Utils.Fastfloor(result.y) + 0.5f;
-        result.z = (float)Utils.Fastfloor(result.z) + 0.5f;
+        result.x = Utils.Fastfloor(result.x) + 0.5f;
+        result.y = Utils.Fastfloor(result.y) + 0.5f;
+        result.z = Utils.Fastfloor(result.z) + 0.5f;
         return result;
     }
     public static void OpenDoor(int EntityID, Vector3i blockPos)

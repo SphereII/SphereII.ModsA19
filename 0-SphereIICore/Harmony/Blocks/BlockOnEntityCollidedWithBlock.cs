@@ -1,7 +1,4 @@
-    using DMT;
 using HarmonyLib;
-using System;
-using UnityEngine;
 
 /**
  * SphereII_Blocks_OnEntityCollidedWithBlock
@@ -19,7 +16,7 @@ using UnityEngine;
  */
 public class SphereII_Blocks_OnEntityCollidedWithBlock
 {
-    private static string DestructableTag = "fcropsDestroy";
+    private static readonly string DestructableTag = "fcropsDestroy";
 
     [HarmonyPatch(typeof(Block))]
     [HarmonyPatch("Init")]
@@ -47,7 +44,7 @@ public class SphereII_Blocks_OnEntityCollidedWithBlock
 
             if (__instance.FilterTags != null && __instance.FilterTags.ContainsCaseInsensitive(DestructableTag))
                 __instance.DamageBlock(_world, 0, _blockPos, _blockValue, Block.list[_blockValue.type].MaxDamage, (_entity != null) ? _entity.entityId : -1, false, false);
-            
+
             return true;
 
 
@@ -61,7 +58,7 @@ public class SphereII_Blocks_OnEntityCollidedWithBlock
     {
         public static bool Prefix(Entity _targetEntity)
         {
-            if (_targetEntity is EntityNPC )
+            if (_targetEntity is EntityNPC)
                 return false;
             return true;
         }

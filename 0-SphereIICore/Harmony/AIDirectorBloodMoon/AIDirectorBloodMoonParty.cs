@@ -1,7 +1,4 @@
-﻿using DMT;
-using HarmonyLib;
-using System;
-using UnityEngine;
+﻿using HarmonyLib;
 public class SphereII_AIDirectorBloodMoonParty
 {
 
@@ -14,13 +11,13 @@ public class SphereII_AIDirectorBloodMoonParty
         {
             public ManagedZombie(EntityEnemy _zombie, EntityPlayer _player)
             {
-                this.zombie = _zombie;
-                this.player = _player;
+                zombie = _zombie;
+                player = _player;
             }
 
-             public EntityPlayer player;
-             public EntityEnemy zombie;
-             public float updateDelay;
+            public EntityPlayer player;
+            public EntityEnemy zombie;
+            public float updateDelay;
         }
         public static bool Prefix(ref bool __result, ManagedZombie mz)
         {

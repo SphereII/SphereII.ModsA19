@@ -19,13 +19,10 @@
 *       This assumes that the Squeeze.mp4 video is inside of the MyVideos.unity3d bundle. As in the Music Player, multiple items can be added to the container slots to play from.
 */
 
-using UnityEngine;
 using System;
-using UnityEngine.Video;
-
-using GUI_2;
 using System.Collections.Generic;
-using Audio;
+using UnityEngine;
+using UnityEngine.Video;
 
 public class BlockMusicBox : BlockLoot
 {
@@ -39,10 +36,10 @@ public class BlockMusicBox : BlockLoot
     // This is the SoundDataNode, if configured through the block
     private String strSoundSource;
 
-    private float TakeDelay = 5f;
+    private readonly float TakeDelay = 5f;
     Vector2i vLootContainerSize;
 
-    private BlockActivationCommand[] cmds = new BlockActivationCommand[]
+    private readonly BlockActivationCommand[] cmds = new BlockActivationCommand[]
     {
         new BlockActivationCommand("light", "electric_switch", true),
         new BlockActivationCommand("Open", "hand", true),
@@ -51,7 +48,7 @@ public class BlockMusicBox : BlockLoot
 
     public BlockMusicBox()
     {
-        this.HasTileEntity = true;
+        HasTileEntity = true;
     }
 
     public override void Init()
@@ -59,23 +56,23 @@ public class BlockMusicBox : BlockLoot
         base.Init();
 
         // SoundSource is the referenced SoundDataNode
-        if (this.Properties.Values.ContainsKey("SoundDataNode"))
-            this.strSoundSource = this.Properties.Values["SoundDataNode"];
+        if (Properties.Values.ContainsKey("SoundDataNode"))
+            strSoundSource = Properties.Values["SoundDataNode"];
 
         // Audio Source is the prefab name, without the asset bundle reference.
         // This is used to keep track of which audio source is actually playing, so we can turn it on and off.
-        if (this.Properties.Values.ContainsKey("AudioSource"))
-            this.strAudioSource = this.Properties.Values["AudioSource"];
+        if (Properties.Values.ContainsKey("AudioSource"))
+            strAudioSource = Properties.Values["AudioSource"];
 
         // The VideoSource can be an asset bundle or URL. If there is an embedded clip on the Video Player, it'll play that in preference to the URL, but
         // a video in the asset bundle will over-ride
-        if (this.Properties.Values.ContainsKey("VideoSource"))
-            this.strVideoSource = this.Properties.Values["VideoSource"];
+        if (Properties.Values.ContainsKey("VideoSource"))
+            strVideoSource = Properties.Values["VideoSource"];
 
-        if (this.Properties.Values.ContainsKey("LootContainerSize"))
-            this.vLootContainerSize = StringParsers.ParseVector2i(this.Properties.Values["LootContainerSize"], ',');
+        if (Properties.Values.ContainsKey("LootContainerSize"))
+            vLootContainerSize = StringParsers.ParseVector2i(Properties.Values["LootContainerSize"], ',');
         else
-            this.vLootContainerSize = new Vector2i(2, 3);
+            vLootContainerSize = new Vector2i(2, 3);
     }
 
     // We want to set down the file if it doesn't already exist, but we don't want to do the Loot container check
@@ -87,10 +84,10 @@ public class BlockMusicBox : BlockLoot
         {
             return;
         }
-        this.shape.OnBlockAdded(world, _chunk, _blockPos, _blockValue);
-        if (this.isMultiBlock)
+        shape.OnBlockAdded(world, _chunk, _blockPos, _blockValue);
+        if (isMultiBlock)
         {
-            this.multiBlockPos.AddChilds(world, _chunk,  _chunk.ClrIdx, _blockPos, _blockValue);
+            multiBlockPos.AddChilds(world, _chunk, _chunk.ClrIdx, _blockPos, _blockValue);
         }
 
         if (!(world.GetTileEntity(_chunk.ClrIdx, _blockPos) is TileEntitySecureLootContainer))
@@ -118,7 +115,7 @@ public class BlockMusicBox : BlockLoot
         #region GetActivationText
 
         PlayerActionsLocal playerInput = ((EntityPlayerLocal)_entityFocusing).playerInput;
-         string keybindString = playerInput.Activate.GetBindingXuiMarkupString(XUiUtils.EmptyBindingStyle.EmptyString, XUiUtils.DisplayStyle.Plain) + playerInput.PermanentActions.Activate.GetBindingXuiMarkupString(XUiUtils.EmptyBindingStyle.EmptyString, XUiUtils.DisplayStyle.Plain);
+        string keybindString = playerInput.Activate.GetBindingXuiMarkupString(XUiUtils.EmptyBindingStyle.EmptyString, XUiUtils.DisplayStyle.Plain) + playerInput.PermanentActions.Activate.GetBindingXuiMarkupString(XUiUtils.EmptyBindingStyle.EmptyString, XUiUtils.DisplayStyle.Plain);
         //string keybindString = UIUtils.GetKeybindString(playerInput.Activate, playerInput.PermanentActions.Activate);
         Block block = Block.list[_blockValue.type];
         string blockName = block.GetBlockName();
@@ -137,9 +134,9 @@ public class BlockMusicBox : BlockLoot
             if (myMusicBoxScript)
             {
                 if (myMusicBoxScript.enabled)
-                    strReturn = string.Format(Localization.Get("musicbox_turnOff") + this.GetBlockName(), keybindString);
+                    strReturn = string.Format(Localization.Get("musicbox_turnOff") + GetBlockName(), keybindString);
                 else
-                    strReturn = string.Format(Localization.Get("musicbox_turnOn") + this.GetBlockName(), keybindString);
+                    strReturn = string.Format(Localization.Get("musicbox_turnOn") + GetBlockName(), keybindString);
             }
         }
         return strReturn;
@@ -149,10 +146,10 @@ public class BlockMusicBox : BlockLoot
 
     public override BlockActivationCommand[] GetBlockActivationCommands(WorldBase _world, BlockValue _blockValue, int _clrIdx, Vector3i _blockPos, EntityAlive _entityFocusing)
     {
-        this.cmds[0].enabled = true;
-        this.cmds[1].enabled = true;
-        this.cmds[2].enabled = (this.TakeDelay > 0f);
-        return this.cmds;
+        cmds[0].enabled = true;
+        cmds[1].enabled = true;
+        cmds[2].enabled = (TakeDelay > 0f);
+        return cmds;
     }
 
     // Handles what happens to the contents of the box when you pick up the block.
@@ -168,7 +165,7 @@ public class BlockMusicBox : BlockLoot
         BlockValue block = world.GetBlock(vector3i);
         EntityPlayerLocal entityPlayerLocal = array[3] as EntityPlayerLocal;
         TileEntityLootContainer tileEntityLootContainer = world.GetTileEntity(clrIdx, vector3i) as TileEntityLootContainer;
-        if (tileEntityLootContainer == null)
+        if (tileEntityLootContainer != null)
             world.GetGameManager().DropContentOfLootContainerServer(blockValue, vector3i, tileEntityLootContainer.entityId);
 
         // Pick up the item and put it inyor your inventory.
@@ -203,8 +200,8 @@ public class BlockMusicBox : BlockLoot
         _blockPos,
         _player
         };
-        timerEventData.Event += this.EventData_Event;
-        childByType.SetTimer(this.TakeDelay, timerEventData, -1f, "");
+        timerEventData.Event += EventData_Event;
+        childByType.SetTimer(TakeDelay, timerEventData, -1f, "");
         #endregion
     }
 
@@ -308,9 +305,9 @@ public class BlockMusicBox : BlockLoot
                 }
 
                 // Initialize the data with our defaults.
-                myMusicBoxScript.strAudioSource = this.strAudioSource;
-                myMusicBoxScript.strSoundSource = this.strSoundSource;
-                myMusicBoxScript.strVideoSource = this.strVideoSource;
+                myMusicBoxScript.strAudioSource = strAudioSource;
+                myMusicBoxScript.strSoundSource = strSoundSource;
+                myMusicBoxScript.strVideoSource = strVideoSource;
                 myMusicBoxScript.myEntity = _player;
 
                 // List of Videos and Sound clips.

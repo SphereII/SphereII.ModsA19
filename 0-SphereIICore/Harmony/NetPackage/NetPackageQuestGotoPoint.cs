@@ -1,9 +1,5 @@
 ﻿using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.NetworkInformation;
-using System.Text;
 using UnityEngine;
 
 class SphereII_NetPackageQuestGotoPoint
@@ -33,7 +29,7 @@ class SphereII_NetPackageQuestGotoPoint
                     {
                         if (prefabInstance != null)
                         {
-                            SingletonMonoBehaviour<ConnectionManager>.Instance.SendPackage(NetPackageManager.GetPackage<NetPackageQuestGotoPoint>().Setup(___playerId, ___questTags, ___questCode, __instance.GotoType, ___difficulty, prefabInstance.boundingBoxPosition.x, prefabInstance.boundingBoxPosition.z, (float)prefabInstance.boundingBoxSize.x, (float)prefabInstance.boundingBoxSize.y, (float)prefabInstance.boundingBoxSize.z, -1f, BiomeFilterTypes.AnyBiome, ___biomeFilter), false, ___playerId, -1, -1, -1);
+                            SingletonMonoBehaviour<ConnectionManager>.Instance.SendPackage(NetPackageManager.GetPackage<NetPackageQuestGotoPoint>().Setup(___playerId, ___questTags, ___questCode, __instance.GotoType, ___difficulty, prefabInstance.boundingBoxPosition.x, prefabInstance.boundingBoxPosition.z, prefabInstance.boundingBoxSize.x, prefabInstance.boundingBoxSize.y, prefabInstance.boundingBoxSize.z, -1f, BiomeFilterTypes.AnyBiome, ___biomeFilter), false, ___playerId, -1, -1, -1);
                             return false;
                         }
                     }

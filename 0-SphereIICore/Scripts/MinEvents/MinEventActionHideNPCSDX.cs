@@ -1,5 +1,4 @@
 ﻿using System.Xml;
-using UnityEngine;
 
 //        <triggered_effect trigger = "onSelfBuffUpdate" action="HideNPCSDX, Mods" hide="true" />
 public class MinEventActionHideNPCSDX : MinEventActionTargetedBase

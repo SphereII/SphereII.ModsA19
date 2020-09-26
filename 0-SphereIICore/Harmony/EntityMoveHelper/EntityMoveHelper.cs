@@ -1,7 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using UnityEngine;
 
 /**
  * SphereIICore_EntityMoveHelper
@@ -20,7 +17,7 @@ namespace SphereIICore_EntityMoveHelper
     {
         public static void Postfix(ref EntityMoveHelper __instance, ref EntityAlive ___entity)
         {
-                ___entity.speedForward = 0f;
+            ___entity.speedForward = 0f;
         }
     }
 
@@ -55,7 +52,7 @@ namespace SphereIICore_EntityMoveHelper
                 }
             }
             return true;
-            
+
         }
     }
 }

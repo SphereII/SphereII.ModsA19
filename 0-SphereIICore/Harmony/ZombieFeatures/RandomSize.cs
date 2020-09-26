@@ -1,4 +1,3 @@
-using DMT;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
@@ -24,8 +23,8 @@ using UnityEngine;
  */
 public class SphereII_RandomSize
 {
-    private static string AdvFeatureClass = "AdvancedZombieFeatures";
-    private static string Feature = "RandomSize";
+    private static readonly string AdvFeatureClass = "AdvancedZombieFeatures";
+    private static readonly string Feature = "RandomSize";
 
     public static class RandomSizeHelper
     {
@@ -64,7 +63,7 @@ public class SphereII_RandomSize
                 if (__instance is EntityPlayerLocal)
                     return;
 
-                
+
 
                 if (RandomSizeHelper.AllowedRandomSize(__instance))
                 {

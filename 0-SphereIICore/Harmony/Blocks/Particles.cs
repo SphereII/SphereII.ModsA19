@@ -1,7 +1,5 @@
-using DMT;
 using HarmonyLib;
 using System;
-using UnityEngine;
 
 
 /**
@@ -29,7 +27,7 @@ public class SphereII_Blocks_Particles
                 if (!ParticleEffect.IsAvailable(strParticleName))
                     ParticleEffect.RegisterBundleParticleEffect(strParticleName);
             }
-                
+
 
             if (__instance is BlockDoorSecure)
                 return;

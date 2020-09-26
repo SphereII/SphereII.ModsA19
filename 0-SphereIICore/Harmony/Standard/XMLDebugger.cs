@@ -1,8 +1,6 @@
 using HarmonyLib;
 using System;
-using System.Collections;
 using System.Xml;
-using UnityEngine;
 
 /**
  * SphereII_XML_Debugging
@@ -11,9 +9,9 @@ using UnityEngine;
  */
 public class SphereII_XML_Debugging
 {
-    private static string AdvFeatureClass = "AdvancedTroubleshootingFeatures";
-    private static string Feature = "VerboseXMLParser";
-    private static string SecondFeature = "PhysicsBody";
+    private static readonly string AdvFeatureClass = "AdvancedTroubleshootingFeatures";
+    private static readonly string Feature = "VerboseXMLParser";
+    private static readonly string SecondFeature = "PhysicsBody";
     [HarmonyPatch(typeof(XmlPatcher))]
     [HarmonyPatch("singlePatch")]
     public class SphereII_XmlPatcher_SinglePatch
@@ -106,7 +104,7 @@ public class SphereII_XML_Debugging
             }
             else
             {
-                if ( !dynamicProperties.Contains("layer"))
+                if (!dynamicProperties.Contains("layer"))
                     AdvLogging.DisplayLog(AdvFeatureClass, "\tWARNING: Collision Layer IS NOT SET. Falling back to layer property, but that is not found either! ");
             }
 

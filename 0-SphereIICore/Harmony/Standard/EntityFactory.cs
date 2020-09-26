@@ -12,7 +12,7 @@ using UnityEngine;
 [HarmonyPatch(typeof(EntityFactory))]
 [HarmonyPatch("addEntityToGameObject")]
 [HarmonyPatch(new Type[] { typeof(GameObject), typeof(string) })]
-public class SphereII_EntityFactoryPatch 
+public class SphereII_EntityFactoryPatch
 {
     static Entity Postfix(Entity __result, GameObject _gameObject, string _className)
     {

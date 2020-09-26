@@ -1,8 +1,5 @@
-using DMT;
 using HarmonyLib;
 using System;
-using System.IO;
-using UnityEngine;
 
 
 /**
@@ -51,7 +48,7 @@ public class SphereII_RandomDeathSpawn
                 // If no group, then assume its an entity
                 int entityID = EntityClass.FromString(strSpawnGroup);
                 entity = EntityFactory.CreateEntity(entityID, __instance.position);
-                if(entity != null)
+                if (entity != null)
                 {
                     GameManager.Instance.World.SpawnEntityInWorld(entity);
                 }

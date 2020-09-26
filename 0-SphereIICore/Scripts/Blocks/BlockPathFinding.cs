@@ -1,14 +1,9 @@
 ﻿using Audio;
-using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 
 class BlockPathFinding : BlockPlayerSign
 {
-    private BlockActivationCommand[] cmds = new BlockActivationCommand[]
+    private readonly BlockActivationCommand[] cmds = new BlockActivationCommand[]
 {
         new BlockActivationCommand("edit", "pen", false),
         new BlockActivationCommand("lock", "lock", false),
@@ -28,13 +23,13 @@ class BlockPathFinding : BlockPlayerSign
         PersistentPlayerData playerData = _world.GetGameManager().GetPersistentPlayerList().GetPlayerData(tileEntitySign.GetOwner());
 
         bool flag = !tileEntitySign.IsOwner(@string) && (playerData != null && playerData.ACL != null) && playerData.ACL.Contains(@string);
-        this.cmds[0].enabled = true;
-        this.cmds[1].enabled = (!tileEntitySign.IsLocked() && (tileEntitySign.IsOwner(@string) || flag));
-        this.cmds[2].enabled = (tileEntitySign.IsLocked() && tileEntitySign.IsOwner(@string));
-        this.cmds[3].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
-        this.cmds[4].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
+        cmds[0].enabled = true;
+        cmds[1].enabled = (!tileEntitySign.IsLocked() && (tileEntitySign.IsOwner(@string) || flag));
+        cmds[2].enabled = (tileEntitySign.IsLocked() && tileEntitySign.IsOwner(@string));
+        cmds[3].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
+        cmds[4].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
 
-        return this.cmds;
+        return cmds;
     }
 
 
@@ -45,7 +40,7 @@ class BlockPathFinding : BlockPlayerSign
         {
             Vector3i parentPos = Block.list[_blockValue.type].multiBlockPos.GetParentPos(_blockPos, _blockValue);
             BlockValue block = _world.GetBlock(parentPos);
-            return this.OnBlockActivated(_indexInBlockActivationCommands, _world, _cIdx, parentPos, block, _player);
+            return OnBlockActivated(_indexInBlockActivationCommands, _world, _cIdx, parentPos, block, _player);
         }
         TileEntitySign tileEntitySign = _world.GetTileEntity(_cIdx, _blockPos) as TileEntitySign;
         if (tileEntitySign == null)
@@ -57,7 +52,7 @@ class BlockPathFinding : BlockPlayerSign
             case 0:
                 if (GameManager.Instance.IsEditMode() || !tileEntitySign.IsLocked() || tileEntitySign.IsUserAllowed(GamePrefs.GetString(EnumGamePrefs.PlayerId)))
                 {
-                    return this.OnBlockActivated(_world, _cIdx, _blockPos, _blockValue, _player);
+                    return OnBlockActivated(_world, _cIdx, _blockPos, _blockValue, _player);
                 }
                 Manager.BroadcastPlayByLocalPlayer(_blockPos.ToVector3() + Vector3.one * 0.5f, "Misc/locked");
                 return false;

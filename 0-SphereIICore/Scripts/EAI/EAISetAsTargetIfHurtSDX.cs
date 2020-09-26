@@ -1,28 +1,27 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 class EAISetAsTargetIfHurtSDX : EAISetAsTargetIfHurt
 {
-    private bool blDisplayLog = false;
+    private readonly bool blDisplayLog = false;
     public void DisplayLog(String strMessage)
     {
         if (blDisplayLog)
-            Debug.Log( this.GetType() + " : " + this.theEntity.EntityName + ": " + this.theEntity.entityId + ": " + strMessage);
+            Debug.Log(GetType() + " : " + theEntity.EntityName + ": " + theEntity.entityId + ": " + strMessage);
     }
-   
+
     public override bool CanExecute()
     {
         // If the Revenge Target is your leader, then forgive them?
-        if (this.theEntity.GetRevengeTarget() != null)
+        if (theEntity.GetRevengeTarget() != null)
         {
-            Entity myLeader = EntityUtilities.GetLeaderOrOwner(this.theEntity.entityId);
-            if(myLeader)
+            Entity myLeader = EntityUtilities.GetLeaderOrOwner(theEntity.entityId);
+            if (myLeader)
             {
-                if(this.theEntity.GetRevengeTarget().entityId == myLeader.entityId)
+                if (theEntity.GetRevengeTarget().entityId == myLeader.entityId)
                     return false;
             }
-       
+
 
             return true;
         }

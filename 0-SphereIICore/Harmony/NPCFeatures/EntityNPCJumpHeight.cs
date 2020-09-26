@@ -1,9 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
 
 
 /**
@@ -17,7 +12,7 @@ using UnityEngine;
  */
 class EntityNPCJumpHeight
 {
-   
+
     [HarmonyPatch(typeof(EntityMoveHelper))]
     [HarmonyPatch("StartJump")]
     public class SphereII_EntityNPCJumpHeight_StartJump

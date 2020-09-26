@@ -10,13 +10,13 @@ public class MinEventActionChangeFactionSDX : MinEventActionRemoveBuff
 
     public override void Execute(MinEventParams _params)
     {
-        for (int i = 0; i < this.targets.Count; i++)
+        for (int i = 0; i < targets.Count; i++)
         {
-            EntityAlive entity = this.targets[i] as EntityAlive;
+            EntityAlive entity = targets[i];
             if (entity != null)
             {
                 // If the faction name is original, try to find the original faction of the entity, stored via cvar.
-                if (Faction == "original" )
+                if (Faction == "original")
                 {
                     // If there's already a factionoriginal cvar, retrive the faction name to be re-assigned.
                     if (entity.Buffs.HasCustomVar("FactionOriginal"))
@@ -29,7 +29,8 @@ public class MinEventActionChangeFactionSDX : MinEventActionRemoveBuff
                     }
                     else
                     {
-                        if (FactionManager.Instance.GetFactionByName( entity.EntityName).ID == 0)
+                        Faction myFaction = FactionManager.Instance.GetFactionByName(entity.EntityName);
+                        if (myFaction != null && myFaction.ID == 0)
                         {
                             entity.factionId = FactionManager.Instance.CreateFaction(entity.EntityName, true, "").ID;
                             entity.factionRank = byte.MaxValue;
@@ -50,7 +51,7 @@ public class MinEventActionChangeFactionSDX : MinEventActionRemoveBuff
                     entity.Buffs.SetCustomVar("FactionNew", newFaction.ID);
 
                     Debug.Log("Changing " + entity.EntityName + " faction from " + entity.factionId + "  to " + newFaction.ID);
-                    
+
                     entity.factionId = newFaction.ID;
                     Debug.Log("\nNew Faction: " + entity.factionId);
                 }
@@ -67,7 +68,7 @@ public class MinEventActionChangeFactionSDX : MinEventActionRemoveBuff
             string name = _attribute.Name;
             if (name != null)
             {
-                if (name == "value" )
+                if (name == "value")
                 {
                     Faction = _attribute.Value;
                     return true;

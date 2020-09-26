@@ -1,6 +1,4 @@
 using HarmonyLib;
-using UnityEngine;
-using System.Diagnostics;
 
 /**
  * SphereII__SoftHands
@@ -10,8 +8,8 @@ using System.Diagnostics;
  */
 public class SphereII__SoftHands
 {
-    private static string AdvFeatureClass = "AdvancedPlayerFeatures";
-    private static string Feature = "SoftHands";
+    private static readonly string AdvFeatureClass = "AdvancedPlayerFeatures";
+    private static readonly string Feature = "SoftHands";
 
     // Adds new feature where Durability affects the damage a weapon can do.
     [HarmonyPatch(typeof(ItemActionAttack))]
@@ -22,7 +20,7 @@ public class SphereII__SoftHands
         {
             // Check if this feature is enabled.
             if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
-                return ;
+                return;
 
             EntityAlive entityAlive = GameManager.Instance.World.GetEntity(_attackerEntityId) as EntityAlive;
             if (entityAlive)
@@ -30,11 +28,11 @@ public class SphereII__SoftHands
                 bool isWearingGloves = false;
 
                 // Throw weapon, skipping
-                if ( damagingItemValue != null && damagingItemValue.ItemClass.HasAnyTags( FastTags.Parse("thrownWeapon")))
+                if (damagingItemValue != null && damagingItemValue.ItemClass.HasAnyTags(FastTags.Parse("thrownWeapon")))
                     return;
 
                 // Check if its the player hand
-                if (entityAlive.inventory.holdingItem.GetItemName() == "meleeHandPlayer" && _attackDetails.damageGiven > 0 && !isWearingGloves) 
+                if (entityAlive.inventory.holdingItem.GetItemName() == "meleeHandPlayer" && _attackDetails.damageGiven > 0 && !isWearingGloves)
                 {
                     AdvLogging.DisplayLog(AdvFeatureClass, "Attacking Entity is an EntityAlive: " + entityAlive.inventory.holdingItemItemValue.ItemClass.GetItemName() + " Inflicting Damage");
                     DamageSource dmg = new DamageSource(EnumDamageSource.Internal, EnumDamageTypes.Bashing);
@@ -42,9 +40,9 @@ public class SphereII__SoftHands
                 }
             }
 
-            return ;
+            return;
         }
     }
 
-  
+
 }

@@ -1,5 +1,4 @@
-﻿using UnityEngine;
-public class DialogRequirementHasCompletedQuestSDX : BaseDialogRequirement
+﻿public class DialogRequirementHasCompletedQuestSDX : BaseDialogRequirement
 {
     public override bool CheckRequirement(EntityPlayer player, EntityNPC talkingTo)
     {

@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using UnityEngine;
 using Random = System.Random;
 
@@ -12,7 +10,7 @@ public static class WinterModPrefab
 
     //  static BlockValue ice = new BlockValue((uint)Block.GetBlockByName("terrIce", false).blockID);
 
-    private static Random Rand = new Random(Guid.NewGuid().GetHashCode());
+    private static readonly Random Rand = new Random(Guid.NewGuid().GetHashCode());
     public static bool Logging = false;
     public static bool Rpc = true;
 
@@ -47,7 +45,7 @@ public static class WinterModPrefab
         }
 
 
-       
+
         notifyRpc = GameManager.Instance.World.ChunkCache.DisplayedChunkGameObjects.ContainsKey(chunk.Key);
 
         List<BlockChangeInfo> Changes = null;

@@ -5,17 +5,17 @@ using UnityEngine;
 // Disables the Eating animation
 class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
 {
-    private bool isTargetToEat = false;
+    public readonly bool isTargetToEat = false;
 
-    private bool blDisplayLog = false;
+    private readonly bool blDisplayLog = false;
 
     public void DisplayLog(String strMessage)
     {
         if (blDisplayLog)
-            Debug.Log(this.GetType() + " : " + this.theEntity.EntityName + ": " + this.theEntity.entityId + ": " + strMessage);
+            Debug.Log(GetType() + " : " + theEntity.EntityName + ": " + theEntity.entityId + ": " + strMessage);
     }
 
-    
+
     public override void Start()
     {
         base.Start();
@@ -26,18 +26,18 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
     {
         bool result = base.CanExecute();
 
-        if (result && this.entityTarget != null)
+        if (result && entityTarget != null)
         {
-            if (EntityUtilities.CanExecuteTask(this.theEntity.entityId, EntityUtilities.Orders.Stay))
+            if (EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
                 return false;
 
-            this.theEntity.SetLookPosition(this.entityTarget.getHeadPosition());
-            this.theEntity.RotateTo(this.entityTarget, 30f, 30f);
+            theEntity.SetLookPosition(entityTarget.getHeadPosition());
+            theEntity.RotateTo(entityTarget, 30f, 30f);
 
-            DisplayLog(" Has Task: " + EntityUtilities.HasTask(this.theEntity.entityId, "Ranged"));
+            DisplayLog(" Has Task: " + EntityUtilities.HasTask(theEntity.entityId, "Ranged"));
 
             // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
-            if (EntityUtilities.HasTask(this.theEntity.entityId, "Ranged"))
+            if (EntityUtilities.HasTask(theEntity.entityId, "Ranged"))
             {
                 if (result)
                     result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
@@ -52,11 +52,11 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
         bool result = base.Continue();
 
         // Non zombies should continue to attack
-        if (this.entityTarget.IsDead())
+        if (entityTarget.IsDead())
         {
-            this.theEntity.IsEating = false;
-            this.theEntity.SetAttackTarget(null, 0);
-            this.theEntity.SetRevengeTarget(null);
+            theEntity.IsEating = false;
+            theEntity.SetAttackTarget(null, 0);
+            theEntity.SetRevengeTarget(null);
             return false;
         }
 
@@ -64,16 +64,16 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
         if (result)
         {
 
-            
+
             // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
-            if (EntityUtilities.HasTask(this.theEntity.entityId, "Ranged"))
-                    result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
+            if (EntityUtilities.HasTask(theEntity.entityId, "Ranged"))
+                result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
         }
 
-        if ( !result )
+        if (!result)
             return result;
 
-        EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Melee);
+        EntityUtilities.ChangeHandholdItem(theEntity.entityId, EntityUtilities.Need.Melee);
 
 
         return result;

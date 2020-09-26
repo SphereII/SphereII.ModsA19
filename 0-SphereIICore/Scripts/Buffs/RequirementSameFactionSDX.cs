@@ -1,6 +1,4 @@
-﻿using System;
-using System.Xml;
-using UnityEngine;
+﻿using System.Xml;
 
 // 	<requirement name="RequirementSameFactionSDX, Mods" faction="animalsCows" />
 

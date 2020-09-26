@@ -7,7 +7,7 @@ public static class ModGeneralUtilities
 {
 
 
-    static bool blDisplayLog = false;
+    static readonly bool blDisplayLog = false;
     public static void DisplayLog(string strMessage)
     {
         if (blDisplayLog)

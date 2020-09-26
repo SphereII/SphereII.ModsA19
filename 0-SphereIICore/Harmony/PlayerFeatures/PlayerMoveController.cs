@@ -23,7 +23,7 @@ public class SphereII_PlayerMoveController_Update
                 if (buff.BuffName.ToLower().Contains("buffcutscene"))
                     ___entityPlayerLocal.Buffs.RemoveBuff(buff.BuffName);
             }
-            
+
         }
         return true;
     }

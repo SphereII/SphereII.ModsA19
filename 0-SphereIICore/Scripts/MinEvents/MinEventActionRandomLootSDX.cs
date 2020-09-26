@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Xml;
 using UnityEngine;
@@ -17,7 +16,7 @@ public class MinEventActionRandomLootSDX : MinEventActionBase
         if (entity == null)
             return;
 
-         GameRandom _random = GameManager.Instance.World.GetGameRandom();
+        GameRandom _random = GameManager.Instance.World.GetGameRandom();
         float Count = 1f;
 
         if (entity.Buffs.HasCustomVar("spLootExperience"))
@@ -27,10 +26,10 @@ public class MinEventActionRandomLootSDX : MinEventActionBase
         int MaxCount = (int)Math.Round(Count);
 
         // Loot group
-        if ( this.lootgroup.Length > 0  )
+        if (lootgroup.Length > 0)
         {
             Debug.Log("Generating Items : " + MaxCount);
-            for ( int x = 0; x < MaxCount; x++ )
+            for (int x = 0; x < MaxCount; x++)
             {
                 ItemStack item = LootContainer.GetRewardItem(lootgroup, Count);
                 Debug.Log("Adding Item: " + item.ToString());
@@ -52,14 +51,14 @@ public class MinEventActionRandomLootSDX : MinEventActionBase
             string name = _attribute.Name;
             if (name != null)
             {
-                if(name == "lootgroup")
+                if (name == "lootgroup")
                 {
                     lootgroup = _attribute.Value;
                     return true;
                 }
                 if (name == "count")
                 {
-                    this.CreateItemCount = (int)StringParsers.ParseFloat(_attribute.Value, 0, -1, NumberStyles.Any);
+                    CreateItemCount = (int)StringParsers.ParseFloat(_attribute.Value, 0, -1, NumberStyles.Any);
                     return true;
                 }
             }

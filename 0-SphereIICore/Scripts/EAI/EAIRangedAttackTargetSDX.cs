@@ -1,24 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using UnityEngine;
-
-class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
+﻿class EAIRangedAttackTargetSDX : EAIRangedAttackTarget2
 {
     public override void Start()
     {
         base.Start();
 
         // Face the entity; no trick shots!
-        if (this.entityTarget != null)
-            this.theEntity.RotateTo(this.entityTarget, 45f, 45f);
+        if (entityTarget != null)
+            theEntity.RotateTo(entityTarget, 45f, 45f);
     }
 
     public override void Reset()
     {
         base.Reset();
-     //   EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Ranged);
+        //   EntityUtilities.ChangeHandholdItem(this.theEntity.entityId, EntityUtilities.Need.Ranged);
 
     }
     public override bool Continue()

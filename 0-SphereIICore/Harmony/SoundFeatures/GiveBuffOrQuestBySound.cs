@@ -1,9 +1,8 @@
 using Audio;
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
-using UnityEngine;
 using System.Linq;
+using UnityEngine;
 
 /**
  * SphereII_GiveBuffOrQuestBySound
@@ -20,7 +19,7 @@ using System.Linq;
  */
 public class SphereII_GiveBuffOrQuestBySound
 {
-    private static string AdvFeatureClass = "AdvancedSoundFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedSoundFeatures";
     public static void CheckForBuffOrQuest(string soundGroupName, Vector3 position)
     {
         AdvLogging.DisplayLog(AdvFeatureClass, "Searching for " + soundGroupName);
@@ -59,13 +58,13 @@ public class SphereII_GiveBuffOrQuestBySound
 [HarmonyPatch(new Type[] { typeof(Vector3), typeof(string), typeof(int) })]
 public class SphereII_Audio_Manager_Play
 {
-    private static string AdvFeatureClass = "AdvancedSoundFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedSoundFeatures";
 
     static bool Prefix(Audio.Manager __instance, Vector3 position, string soundGroupName)
     {
         AdvLogging.DisplayLog(AdvFeatureClass, "AudioManager.Play(): Vector3, String, int: " + soundGroupName);
 
-        if(String.IsNullOrEmpty(soundGroupName))
+        if (String.IsNullOrEmpty(soundGroupName))
             return true;
 
         AdvLogging.DisplayLog(AdvFeatureClass, "Audio.Client.Play(): Vector3, string: " + soundGroupName.Split('/').Last());
@@ -83,7 +82,7 @@ public class SphereII_Audio_Manager_Play
 [HarmonyPatch(new Type[] { typeof(Entity), typeof(string), typeof(float), typeof(bool) })]
 public class SphereII_Audio_Server_Play
 {
-    private static string AdvFeatureClass = "AdvancedSoundFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedSoundFeatures";
 
 
     static bool Prefix(Audio.Manager __instance, Entity entity, string soundGroupName)
@@ -92,7 +91,7 @@ public class SphereII_Audio_Server_Play
         if (entity == null)
             return true;
 
-        if(String.IsNullOrEmpty(soundGroupName))
+        if (String.IsNullOrEmpty(soundGroupName))
             return true;
 
         AdvLogging.DisplayLog(AdvFeatureClass, "Audio.Client.Play(): Vector3, string: " + soundGroupName.Split('/').Last());
@@ -106,7 +105,7 @@ public class SphereII_Audio_Server_Play
 [HarmonyPatch(new Type[] { typeof(int), typeof(string), typeof(float) })]
 public class SphereII_Audio_Client_Play_1
 {
-    private static string AdvFeatureClass = "AdvancedSoundFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedSoundFeatures";
 
     static bool Prefix(int playOnEntityId, string soundGoupName, float _occlusion)
     {
@@ -115,7 +114,7 @@ public class SphereII_Audio_Client_Play_1
         if (myEntity == null)
             return true;
 
-        if(String.IsNullOrEmpty(soundGoupName))
+        if (String.IsNullOrEmpty(soundGoupName))
             return true;
 
         AdvLogging.DisplayLog(AdvFeatureClass, "Audio.Client.Play(): Vector3, string: " + soundGoupName.Split('/').Last());
@@ -130,13 +129,13 @@ public class SphereII_Audio_Client_Play_1
 [HarmonyPatch(new Type[] { typeof(Vector3), typeof(string), typeof(float), typeof(int) })]
 public class SphereII_Audio_Client_Play_2
 {
-    private static string AdvFeatureClass = "AdvancedSoundFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedSoundFeatures";
 
     static bool Prefix(Vector3 position, string soundGoupName)
     {
         AdvLogging.DisplayLog(AdvFeatureClass, "Audio.Client.Play(): Vector3, string: " + soundGoupName);
 
-        if(String.IsNullOrEmpty(soundGoupName))
+        if (String.IsNullOrEmpty(soundGoupName))
             return true;
 
         AdvLogging.DisplayLog(AdvFeatureClass, "Audio.Client.Play(): Vector3, string: " + soundGoupName.Split('/').Last());

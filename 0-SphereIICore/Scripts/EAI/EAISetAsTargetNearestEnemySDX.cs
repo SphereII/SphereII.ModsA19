@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-
-class EAISetAsTargetNearestEnemySDX : EAISetNearestEntityAsTarget
+﻿class EAISetAsTargetNearestEnemySDX : EAISetNearestEntityAsTarget
 {
- 
+
     // Backwards Compatibility
 }
 

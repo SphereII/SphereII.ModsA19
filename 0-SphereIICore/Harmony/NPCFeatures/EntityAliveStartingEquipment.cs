@@ -1,10 +1,5 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.CodeDom;
 using System.Collections.Generic;
-using System.Reflection;
-using UnityEngine;
 class SphereII_EntityAliveStartingEquipment_Equiment
 {
 

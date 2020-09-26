@@ -7,7 +7,7 @@ public class SphereIICore_Init : IHarmony
 {
     public void Start()
     {
-        Debug.Log(" Loading Patch: " + this.GetType().ToString());
+        Debug.Log(" Loading Patch: " + GetType().ToString());
 
         // Reduce extra logging stuff
         Application.SetStackTraceLogType(UnityEngine.LogType.Log, StackTraceLogType.None);
@@ -22,7 +22,7 @@ public class SphereIICore_Init : IHarmony
 [HarmonyPatch(typeof(XUiC_MainMenu))]
 [HarmonyPatch("OnOpen")]
 public class SphereII_Main_Menu_ClearCache
-{ 
+{
     static void Postfix(XUiC_MainMenu __instance)
     {
         Debug.Log("Clearing SphereCache...");

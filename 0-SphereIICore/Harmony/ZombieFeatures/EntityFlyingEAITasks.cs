@@ -1,12 +1,6 @@
-﻿using DMT;
-using GamePath;
+﻿using GamePath;
 using HarmonyLib;
-using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Reflection;
 using UAI;
-using UnityEngine;
 
 
 class SphereII_EntityFlyingEAITasks

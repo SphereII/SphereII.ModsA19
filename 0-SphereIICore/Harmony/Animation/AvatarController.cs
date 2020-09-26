@@ -1,7 +1,5 @@
-using DMT;
 using HarmonyLib;
 using System;
-using UnityEngine;
 
 /**
  * SphereII_AvatarController:  0-SphereIICore/Harmony/Animation/AvatarController.cs
@@ -23,8 +21,8 @@ public class SphereII_AvatarController
     [HarmonyPatch(new Type[] { typeof(string) })]
     public class SphereII_AnimatorMapperTrigger
     {
-        private static string AdvFeatureClass = "AdvancedTroubleshootingFeatures";
-        private static string Feature = "AnimatorMapper";
+        private static readonly string AdvFeatureClass = "AdvancedTroubleshootingFeatures";
+        private static readonly string Feature = "AnimatorMapper";
 
         public static bool Prefix(AvatarController __instance, string _property)
         {
@@ -32,7 +30,7 @@ public class SphereII_AvatarController
                 AdvLogging.DisplayLog(AdvFeatureClass, "Set Trigger(): " + _property);
 
             // Provides a random index value to the default animator.
-            __instance.SetInt("RandomIndex",  UnityEngine.Random.Range(0, 10));
+            __instance.SetInt("RandomIndex", UnityEngine.Random.Range(0, 10));
             __instance.SetInt(_property, UnityEngine.Random.Range(0, 10));
             return true;
         }

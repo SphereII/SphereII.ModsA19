@@ -1,7 +1,5 @@
 using HarmonyLib;
-using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection.Emit;
 using UnityEngine;
@@ -25,7 +23,7 @@ class SphereII_Faction_Tweaks
             var codes = new List<CodeInstruction>(instructions);
 
             int Counter = 0;
-            for (int i = 0; i < codes.Count ; i++)
+            for (int i = 0; i < codes.Count; i++)
             {
                 if (codes[i].opcode == OpCodes.Brfalse)
                 {
@@ -50,7 +48,7 @@ class SphereII_Faction_Tweaks
     {
         public static bool Prefix(Faction __instance, byte _factionId, float _value)
         {
-            __instance.Relationships[(int)_factionId] = Mathf.Clamp(_value, 0f, 1000f);
+            __instance.Relationships[_factionId] = Mathf.Clamp(_value, 0f, 1000f);
             return false;
 
         }

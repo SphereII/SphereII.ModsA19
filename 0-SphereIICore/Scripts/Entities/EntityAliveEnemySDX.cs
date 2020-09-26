@@ -13,7 +13,6 @@
  */
 using System;
 using System.Collections.Generic;
-using System.IO;
 using UnityEngine;
 
 public class EntityAliveEnemySDX : EntityEnemy
@@ -27,7 +26,7 @@ public class EntityAliveEnemySDX : EntityEnemy
 
     public System.Random random = new System.Random();
 
-    private bool blDisplayLog = true;
+    private readonly bool blDisplayLog = true;
     public void DisplayLog(String strMessage)
     {
         if (blDisplayLog && !IsDead())
@@ -40,7 +39,7 @@ public class EntityAliveEnemySDX : EntityEnemy
     }
 
 
-    
+
     public override float GetEyeHeight()
     {
         if (flEyeHeight == -1f)
@@ -112,14 +111,14 @@ public class EntityAliveEnemySDX : EntityEnemy
 
     protected override float getNextStepSoundDistance()
     {
-        if (!this.IsRunning)
+        if (!IsRunning)
         {
             return 0.5f;
         }
         return 0.25f;
     }
 
-    
+
     public void ConfigureBounaryBox(Vector3 newSize, Vector3 center)
     {
         BoxCollider component = base.gameObject.GetComponent<BoxCollider>();
@@ -143,7 +142,7 @@ public class EntityAliveEnemySDX : EntityEnemy
         }
 
     }
-    
+
     public override string EntityName
     {
         get
@@ -175,9 +174,9 @@ public class EntityAliveEnemySDX : EntityEnemy
 
     protected virtual void SetupStartingItems()
     {
-        for (int i = 0; i < this.itemsOnEnterGame.Count; i++)
+        for (int i = 0; i < itemsOnEnterGame.Count; i++)
         {
-            ItemStack itemStack = this.itemsOnEnterGame[i];
+            ItemStack itemStack = itemsOnEnterGame[i];
             ItemClass forId = ItemClass.GetForId(itemStack.itemValue.type);
             if (forId.HasQuality)
             {
@@ -187,7 +186,7 @@ public class EntityAliveEnemySDX : EntityEnemy
             {
                 itemStack.count = forId.Stacknumber.Value;
             }
-            this.inventory.SetItem(i, itemStack);
+            inventory.SetItem(i, itemStack);
         }
     }
     public override void OnUpdateLive()
@@ -259,20 +258,21 @@ public class EntityAliveEnemySDX : EntityEnemy
         if (target != null)
         {
             // makes the npc look at its attack target
-            if (this.emodel != null && this.emodel.avatarController != null)
-                this.emodel.SetLookAt(target.getHeadPosition());
-
-            SetLookPosition(target.getHeadPosition());
-            RotateTo(target, 45, 45);
+            if (emodel != null && emodel.avatarController != null)
+            {
+                emodel.SetLookAt(target.getHeadPosition());
+                SetLookPosition(target.getHeadPosition());
+                RotateTo(target, 45, 45);
+            }
         }
         Buffs.RemoveBuff("buffnewbiecoat", false);
         Stats.Health.MaxModifier = Stats.Health.Max;
 
         // Set CanFall and IsOnGround
-        if (this.emodel != null && this.emodel.avatarController != null)
+        if (emodel != null && emodel.avatarController != null)
         {
-            this.emodel.avatarController.SetBool("CanFall", !this.emodel.IsRagdollActive && this.bodyDamage.CurrentStun == EnumEntityStunType.None && !this.isSwimming);
-            this.emodel.avatarController.SetBool("IsOnGround", this.onGround || this.isSwimming);
+            emodel.avatarController.SetBool("CanFall", !emodel.IsRagdollActive && bodyDamage.CurrentStun == EnumEntityStunType.None && !isSwimming);
+            emodel.avatarController.SetBool("IsOnGround", onGround || isSwimming);
         }
 
 
@@ -286,5 +286,5 @@ public class EntityAliveEnemySDX : EntityEnemy
         base.OnUpdateLive();
 
     }
-   
+
 }

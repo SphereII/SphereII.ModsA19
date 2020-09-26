@@ -6,8 +6,8 @@ using UnityEngine;
 class EAIMaslowLevel1SDX : EAIApproachSpot
 {
 
-    private static string AdvFeatureClass = "AdvancedNPCFeatures";
-    
+    private static readonly string AdvFeatureClass = "AdvancedNPCFeatures";
+
 
     List<String> lstFoodItems = new List<String>();
     List<String> lstFoodBins = new List<String>();
@@ -24,18 +24,16 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
     List<String> lstBeds = new List<String>();
     List<String> lstProductionBuffs = new List<string>();
-
-    List<ProductionItem> lstProductionItem = new List<ProductionItem>();
+    readonly List<ProductionItem> lstProductionItem = new List<ProductionItem>();
 
     String strSanitationBlock = "";
-    String strProductionFinishedBuff = "";
-
-    int MaxDistance = 20;
+    readonly String strProductionFinishedBuff = "";
+    readonly int MaxDistance = 20;
     public int investigateTicks;
     // List<Vector3> lstWaterBlocks = new List<Vector3>();
 
     public bool hadPath;
-    private bool blDisplayLog = false;
+    private readonly bool blDisplayLog = false;
     private Vector3 investigatePos;
     private Vector3 seekPos;
     private int pathRecalculateTicks;
@@ -43,7 +41,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     public void DisplayLog(String strMessage)
     {
         if (blDisplayLog)
-            Debug.Log(this.theEntity.EntityName + ": " + this.theEntity.entityId + ": " + strMessage);
+            Debug.Log(theEntity.EntityName + ": " + theEntity.entityId + ": " + strMessage);
     }
 
 
@@ -57,30 +55,30 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     public override void Init(EntityAlive _theEntity)
     {
         base.Init(_theEntity);
-        this.MutexBits = 3;
-        this.executeDelay = 0.5f;
+        MutexBits = 3;
+        executeDelay = 0.5f;
 
         // There is too many values that we need to read in from the entity, so we'll read them directly from the entityclass
         EntityClass entityClass = EntityClass.list[_theEntity.entityClass];
 
-        this.lstFoodBins = ConfigureEntityClass("FoodBins", entityClass);
-        this.lstFoodItems = ConfigureEntityClass("FoodItems", entityClass);
-        this.lstWaterBins = ConfigureEntityClass("WaterBins", entityClass);
-        this.lstWaterItems = ConfigureEntityClass("WaterItems", entityClass);
+        lstFoodBins = ConfigureEntityClass("FoodBins", entityClass);
+        lstFoodItems = ConfigureEntityClass("FoodItems", entityClass);
+        lstWaterBins = ConfigureEntityClass("WaterBins", entityClass);
+        lstWaterItems = ConfigureEntityClass("WaterItems", entityClass);
 
 
-        this.lstHomeBlocks = ConfigureEntityClass("HomeBlocks", entityClass);
-        this.lstHungryBuffs = ConfigureEntityClass("HungryBuffs", entityClass);
-        this.lstThirstyBuffs = ConfigureEntityClass("ThirstyBuffs", entityClass);
+        lstHomeBlocks = ConfigureEntityClass("HomeBlocks", entityClass);
+        lstHungryBuffs = ConfigureEntityClass("HungryBuffs", entityClass);
+        lstThirstyBuffs = ConfigureEntityClass("ThirstyBuffs", entityClass);
 
-        this.lstSanitation = ConfigureEntityClass("ToiletBlocks", entityClass);
-        this.lstSanitationBuffs = ConfigureEntityClass("SanitationBuffs", entityClass);
+        lstSanitation = ConfigureEntityClass("ToiletBlocks", entityClass);
+        lstSanitationBuffs = ConfigureEntityClass("SanitationBuffs", entityClass);
 
         if (entityClass.Properties.Values.ContainsKey("SanitationBlock"))
-            this.strSanitationBlock = entityClass.Properties.Values["SanitationBlock"];
+            strSanitationBlock = entityClass.Properties.Values["SanitationBlock"];
 
-        this.lstBeds = ConfigureEntityClass("Beds", entityClass);
-        this.lstProductionBuffs = ConfigureEntityClass("ProductionFinishedBuff", entityClass);
+        lstBeds = ConfigureEntityClass("Beds", entityClass);
+        lstProductionBuffs = ConfigureEntityClass("ProductionFinishedBuff", entityClass);
 
 
         if (entityClass.Properties.Classes.ContainsKey("ProductionItems"))
@@ -97,7 +95,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
                 if (dynamicProperties3.Params1.TryGetValue(keyValuePair.Key, out strCvar))
                     item.cvar = strCvar;
 
-                this.lstProductionItem.Add(item);
+                lstProductionItem.Add(item);
                 DisplayLog("Adding Production Item: " + keyValuePair.Key + " with a count of: " + item.Count + " and will reset: " + strCvar);
             }
         }
@@ -131,27 +129,27 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     public override bool CanExecute()
     {
         // Disable maslow for animals.
-        if(this.theEntity is EntityAliveFarmingAnimalSDX)
+        if (theEntity is EntityAliveFarmingAnimalSDX)
         {
-            if(!Configuration.CheckFeatureStatus(AdvFeatureClass, "AnimalMaslow"))
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, "AnimalMaslow"))
                 return false;
         }
         // disable maslow for NPCs
 
-        else if(this.theEntity is EntityAliveSDX)
+        else if (theEntity is EntityAliveSDX)
         {
-            if(!Configuration.CheckFeatureStatus(AdvFeatureClass, "NPCMaslow"))
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, "NPCMaslow"))
                 return false;
         }
         bool result = false;
 
-        if (this.theEntity.IsSleeping)
+        if (theEntity.IsSleeping)
             return false;
 
 
         if (!CanContinue())
         {
-            this.theEntity.SetInvestigatePosition(Vector3.zero, 0);
+            theEntity.SetInvestigatePosition(Vector3.zero, 0);
             return false;
         }
         //// If there's no buff incentive, don't execute.
@@ -164,7 +162,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         //{
 
         //}
-        if (!this.theEntity.HasInvestigatePosition)
+        if (!theEntity.HasInvestigatePosition)
         {
             if (CheckForFoodBin())  // Search for food if its hungry.
                 result = true;
@@ -180,7 +178,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             {
                 // check and see if you have a home block.
                 CheckForHomeBlock();
-                this.theEntity.SetInvestigatePosition(Vector3.zero, 0);
+                theEntity.SetInvestigatePosition(Vector3.zero, 0);
                 result = false;
             }
 
@@ -189,11 +187,11 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
         // If We can continue, that means we've triggered the hunger or thirst buff. Investigate Position are set int he CheckFor.. methods
         // If we still don't have a position, then there's no food or water near by that satisfies our needs.
-        if (result && this.theEntity.HasInvestigatePosition)
+        if (result && theEntity.HasInvestigatePosition)
         {
-            DisplayLog(" Investigate Pos: " + this.investigatePos + " Current Seek Time: " + investigateTicks + " Max Seek Time: " + this.theEntity.GetInvestigatePositionTicks() + " Seek Position: " + this.seekPos + " Target Block: " + this.theEntity.world.GetBlock(new Vector3i(this.investigatePos)).Block.GetBlockName());
-            this.investigatePos = this.theEntity.InvestigatePosition;
-            this.seekPos = this.theEntity.world.FindSupportingBlockPos(this.investigatePos);
+            DisplayLog(" Investigate Pos: " + investigatePos + " Current Seek Time: " + investigateTicks + " Max Seek Time: " + theEntity.GetInvestigatePositionTicks() + " Seek Position: " + seekPos + " Target Block: " + theEntity.world.GetBlock(new Vector3i(investigatePos)).Block.GetBlockName());
+            investigatePos = theEntity.InvestigatePosition;
+            seekPos = theEntity.world.FindSupportingBlockPos(investigatePos);
             return true;
         }
         return false;
@@ -202,47 +200,47 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
     public override void Start()
     {
-        this.hadPath = false;
-        this.updatePath();
+        hadPath = false;
+        updatePath();
     }
     public override void Reset()
     {
-        this.theEntity.navigator.clearPath();
-        this.theEntity.SetLookPosition(Vector3.zero);
-        this.manager.lookTime = 5f + UnityEngine.Random.value * 3f;
-        this.manager.interestDistance = 2f;
+        theEntity.navigator.clearPath();
+        theEntity.SetLookPosition(Vector3.zero);
+        manager.lookTime = 5f + UnityEngine.Random.value * 3f;
+        manager.interestDistance = 2f;
     }
     public override void Update()
     {
-        PathEntity path = this.theEntity.navigator.getPath();
+        PathEntity path = theEntity.navigator.getPath();
         if (path != null)
         {
-            this.hadPath = true;
-            this.theEntity.moveHelper.CalcIfUnreachablePos();
+            hadPath = true;
+            theEntity.moveHelper.CalcIfUnreachablePos();
         }
-        Vector3 lookPosition = this.investigatePos;
+        Vector3 lookPosition = investigatePos;
         lookPosition.y += 0.8f;
-        this.theEntity.SetLookPosition(lookPosition);
+        theEntity.SetLookPosition(lookPosition);
 
         // if the entity is blocked by anything, switch it around and tell it to find a new path.
-        if (this.theEntity.moveHelper.BlockedTime > 1f)
+        if (theEntity.moveHelper.BlockedTime > 1f)
         {
-            this.pathRecalculateTicks = 0;
-            this.theEntity.SetLookPosition(lookPosition - Vector3.back);
+            pathRecalculateTicks = 0;
+            theEntity.SetLookPosition(lookPosition - Vector3.back);
         }
-        if (--this.pathRecalculateTicks <= 0)
+        if (--pathRecalculateTicks <= 0)
         {
-            this.updatePath();
+            updatePath();
         }
     }
 
     private void updatePath()
     {
-        if (PathFinderThread.Instance.IsCalculatingPath(this.theEntity.entityId))
+        if (PathFinderThread.Instance.IsCalculatingPath(theEntity.entityId))
             return;
 
-        this.pathRecalculateTicks = 40 + this.theEntity.rand.RandomRange(20);
-        PathFinderThread.Instance.FindPath(this.theEntity, this.seekPos, this.theEntity.GetMoveSpeed(), false, this);
+        pathRecalculateTicks = 40 + theEntity.rand.RandomRange(20);
+        PathFinderThread.Instance.FindPath(theEntity, seekPos, theEntity.GetMoveSpeed(), false, this);
     }
 
     // Checks a list of buffs to see if there's an incentive for it to execute.
@@ -250,7 +248,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     {
         foreach (String strIncentive in Incentives)
         {
-            if (this.theEntity.Buffs.HasBuff(strIncentive))
+            if (theEntity.Buffs.HasBuff(strIncentive))
                 return true;
         }
         return false;
@@ -259,11 +257,11 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     public bool CanContinue()
     {
         // If there's no buff incentive, or no nearby water block, don't bother looking for water.
-        if (!CheckIncentive(this.lstThirstyBuffs) && !CheckIncentive(this.lstHungryBuffs) && !CheckIncentive(this.lstSanitationBuffs) && !CheckIfShelterNeeded() && !CheckIncentive(this.lstProductionBuffs))
+        if (!CheckIncentive(lstThirstyBuffs) && !CheckIncentive(lstHungryBuffs) && !CheckIncentive(lstSanitationBuffs) && !CheckIfShelterNeeded() && !CheckIncentive(lstProductionBuffs))
             return false;
 
         // if they are already healing for their water or health, don't try to add anymore.
-        if (this.theEntity.Buffs.HasBuff("buffhealwatermax") || this.theEntity.Buffs.HasBuff("buffhealstaminamax"))
+        if (theEntity.Buffs.HasBuff("buffhealwatermax") || theEntity.Buffs.HasBuff("buffhealstaminamax"))
             return false;
 
         return true;
@@ -273,17 +271,17 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
         if (!CanContinue())
         {
-            this.theEntity.SetInvestigatePosition(Vector3.zero, 0);
+            theEntity.SetInvestigatePosition(Vector3.zero, 0);
             return false;
         }
-        PathNavigate navigator = this.theEntity.navigator;
+        PathNavigate navigator = theEntity.navigator;
         PathEntity path = navigator.getPath();
-        if (this.hadPath && path == null)
+        if (hadPath && path == null)
             return false;
 
-        if (++this.investigateTicks > 40)
+        if (++investigateTicks > 40)
         {
-            this.investigateTicks = 0;
+            investigateTicks = 0;
             return false;
             //if (!this.theEntity.HasInvestigatePosition)
             //    return false; // no invesitgative position
@@ -295,7 +293,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             //}
         }
 
-        float sqrMagnitude2 = (this.seekPos - this.theEntity.position).sqrMagnitude;
+        float sqrMagnitude2 = (seekPos - theEntity.position).sqrMagnitude;
         if (sqrMagnitude2 <= 4f || (path != null && path.isFinished()))
         {
             return PerformAction();
@@ -311,7 +309,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
         //if (this.investigatePos != Vector3.zero)
         //{
-        this.theEntity.SetLookPosition(seekPos);
+        theEntity.SetLookPosition(seekPos);
 
         //    Ray lookRay = new Ray(this.theEntity.position, theEntity.GetLookVector());
         //    if (!Voxel.Raycast(this.theEntity.world, lookRay, Constants.cDigAndBuildDistance, -538480645, 4095, 0f))
@@ -320,18 +318,18 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         //    if (!Voxel.voxelRayHitInfo.bHitValid)
         //        return false; // Missed the target. Overlooking?
         //}
-        DisplayLog("Before: " + this.theEntity.ToString());
+        DisplayLog("Before: " + theEntity.ToString());
 
         BlockValue checkBlock = theEntity.world.GetBlock(new Vector3i(seekPos.x, seekPos.y, seekPos.z));
 
         // Original hand item.
-        ItemClass original = this.theEntity.inventory.holdingItem;
+        ItemClass original = theEntity.inventory.holdingItem;
 
         // Look at the water, then execute the action on the empty jar.
-        this.theEntity.SetLookPosition(seekPos);
+        theEntity.SetLookPosition(seekPos);
 
         // Execute the drinking process
-        if (CheckIncentive(this.lstThirstyBuffs))
+        if (CheckIncentive(lstThirstyBuffs))
         {
             DisplayLog("Thirsty Check Block: " + checkBlock.Block.GetBlockName());
 
@@ -342,33 +340,33 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             if (checkBlock.Block.blockMaterial.IsLiquid)
             {
                 // This is the actual item we want to drink out of. The above is just to deplete the water source.
-                this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem("drinkJarEmpty", false));
-                this.theEntity.Use(true);
-                this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
+                theEntity.inventory.SetBareHandItem(ItemClass.GetItem("drinkJarEmpty", false));
+                theEntity.Use(true);
+                theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
 
                 return true;
             }
-            else if (this.lstWaterBins.Contains(checkBlock.Block.GetBlockName()))  // If the water bins are configured, then look inside for something to drink. This is for NPCs, rather than cows.
+            else if (lstWaterBins.Contains(checkBlock.Block.GetBlockName()))  // If the water bins are configured, then look inside for something to drink. This is for NPCs, rather than cows.
             {
                 DisplayLog(" Checking water Bin: " + checkBlock.Block.GetBlockName());
-                TileEntityLootContainer tileEntityLootContainer = this.theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
+                TileEntityLootContainer tileEntityLootContainer = theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
                 if (tileEntityLootContainer == null)
                     return false; // it's not a loot container.
 
 
                 // Check if it has any water in it.
-                if (CheckContents(tileEntityLootContainer, this.lstWaterItems, "Water") != null)
+                if (CheckContents(tileEntityLootContainer, lstWaterItems, "Water") != null)
                 {
                     DisplayLog(" Found a water item");
-                    item = GetItemFromContainer(tileEntityLootContainer, this.lstWaterItems, "Water");
+                    item = GetItemFromContainer(tileEntityLootContainer, lstWaterItems, "Water");
                 }
             }
 
             // Check the back pack
-            else if (CheckContents(this.theEntity.lootContainer, this.lstWaterItems, "Water") != null)
+            else if (CheckContents(theEntity.lootContainer, lstWaterItems, "Water") != null)
             {
                 DisplayLog(" Checking NPCs backpack ");
-                item = GetItemFromContainer(this.theEntity.lootContainer, this.lstWaterItems, "Water");
+                item = GetItemFromContainer(theEntity.lootContainer, lstWaterItems, "Water");
             }
 
             if (item != null)
@@ -376,15 +374,15 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
                 DisplayLog(" Drinking: " + item.ItemClass.GetItemName());
                 // Hold the food item.
-                this.theEntity.inventory.SetBareHandItem(item);
-                this.theEntity.Attack(true);
+                theEntity.inventory.SetBareHandItem(item);
+                theEntity.Attack(true);
                 // We want to consume the food, but the consumption of food isn't supported on the non-players, so just fire off the buff 
-                this.theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
-                this.theEntity.FireEvent(MinEventTypes.onSelfHealedSelf);
+                theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
+                theEntity.FireEvent(MinEventTypes.onSelfHealedSelf);
 
                 DisplayLog(" Drinking");
                 // restore the hand item.
-                this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
+                theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
 
                 return true;
             }
@@ -392,49 +390,49 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
 
             // see if the block is an entity, rather than a watering hold. 
-            float milkLevel = this.GetEntityWater();
+            float milkLevel = GetEntityWater();
             if (milkLevel > 0)
             {
-                if (this.theEntity.Buffs.HasCustomVar("Mother"))
+                if (theEntity.Buffs.HasCustomVar("Mother"))
                 {
                     DisplayLog("Checking For mother");
-                    int MotherID = (int)this.theEntity.Buffs.GetCustomVar("Mother");
-                    EntityAliveSDX MotherEntity = this.theEntity.world.GetEntity(MotherID) as EntityAliveSDX;
+                    int MotherID = (int)theEntity.Buffs.GetCustomVar("Mother");
+                    EntityAliveSDX MotherEntity = theEntity.world.GetEntity(MotherID) as EntityAliveSDX;
                     if (MotherEntity)
                     {
                         DisplayLog(" Draining Mommy of milk");
                         MotherEntity.Buffs.SetCustomVar("MilkLevel", 0f, true);
-                        this.theEntity.Buffs.SetCustomVar("$foodAmountAdd", 50f, true);
-                        this.theEntity.Buffs.SetCustomVar("$waterAmountAdd", 50f, true);
+                        theEntity.Buffs.SetCustomVar("$foodAmountAdd", 50f, true);
+                        theEntity.Buffs.SetCustomVar("$waterAmountAdd", 50f, true);
                     }
                 }
             }
             // This is the actual item we want to drink out of. The above is just to deplete the water source.
-            this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem("drinkJarBoiledWater", false));
-            this.theEntity.Attack(true);
+            theEntity.inventory.SetBareHandItem(ItemClass.GetItem("drinkJarBoiledWater", false));
+            theEntity.Attack(true);
             // Then we want to fire off the event on the water we are drinking.
-            this.theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
+            theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
 
             DisplayLog(" Drinking");
             // restore the hand item.
-            this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
+            theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
 
         }
 
-        if (CheckIncentive(this.lstHungryBuffs))
+        if (CheckIncentive(lstHungryBuffs))
         {
             DisplayLog("Hunger Check Block: " + checkBlock.Block.GetBlockName());
             ItemValue item = null;
 
-            if (this.lstFoodBins.Contains(checkBlock.Block.GetBlockName()))
+            if (lstFoodBins.Contains(checkBlock.Block.GetBlockName()))
             {
-                TileEntityLootContainer tileEntityLootContainer = this.theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
+                TileEntityLootContainer tileEntityLootContainer = theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
                 if (tileEntityLootContainer == null)
                     return false; // it's not a loot container.
 
 
                 // Check if it has any food on it.
-                if (CheckContents(tileEntityLootContainer, this.lstFoodItems, "Food") != null)
+                if (CheckContents(tileEntityLootContainer, lstFoodItems, "Food") != null)
                 {
                     DisplayLog(" Found Food in food bin.");
                     item = GetItemFromContainer(tileEntityLootContainer, lstFoodItems, "Food");
@@ -442,66 +440,66 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             }
 
             // Check the back pack
-            else if (CheckContents(this.theEntity.lootContainer, this.lstFoodItems, "Food") != null)
+            else if (CheckContents(theEntity.lootContainer, lstFoodItems, "Food") != null)
             {
                 DisplayLog(" Found Food in the backpack");
-                item = GetItemFromContainer(this.theEntity.lootContainer, this.lstFoodItems, "Food");
+                item = GetItemFromContainer(theEntity.lootContainer, lstFoodItems, "Food");
             }
 
             if (item != null)
             {
                 DisplayLog(" entity is eating: " + item.ItemClass.GetItemName());
                 // Hold the food item.
-                this.theEntity.inventory.SetBareHandItem(item);
-                this.theEntity.Attack(true);
+                theEntity.inventory.SetBareHandItem(item);
+                theEntity.Attack(true);
                 // We want to consume the food, but the consumption of food isn't supported on the non-players, so just fire off the buff 
-                this.theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
-                this.theEntity.FireEvent(MinEventTypes.onSelfHealedSelf);
+                theEntity.FireEvent(MinEventTypes.onSelfPrimaryActionEnd);
+                theEntity.FireEvent(MinEventTypes.onSelfHealedSelf);
 
                 DisplayLog(" Eating");
                 // restore the hand item.
-                this.theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
+                theEntity.inventory.SetBareHandItem(ItemClass.GetItem(original.Name, false));
             }
         }
 
-        if (CheckIncentive(this.lstSanitationBuffs))
+        if (CheckIncentive(lstSanitationBuffs))
         {
-            if (this.lstSanitation.Contains(checkBlock.Block.GetBlockName()))
-                this.theEntity.Buffs.CVars["$solidWasteAmount"] = 0;
+            if (lstSanitation.Contains(checkBlock.Block.GetBlockName()))
+                theEntity.Buffs.CVars["$solidWasteAmount"] = 0;
 
             // No toilets.
-            if (this.lstSanitation.Count == 0)
+            if (lstSanitation.Count == 0)
             {
                 // No Sanitation location? Let it go where you are.
-                this.theEntity.Buffs.CVars["$solidWasteAmount"] = 0;
+                theEntity.Buffs.CVars["$solidWasteAmount"] = 0;
 
                 // if there's no block, don't do anything.
                 if (!String.IsNullOrEmpty(strSanitationBlock))
                 {
-                    Vector3i sanitationBlock = new Vector3i(this.theEntity.position);
-                    this.theEntity.world.SetBlockRPC(sanitationBlock, Block.GetBlockValue(this.strSanitationBlock, false));
+                    Vector3i sanitationBlock = new Vector3i(theEntity.position);
+                    theEntity.world.SetBlockRPC(sanitationBlock, Block.GetBlockValue(strSanitationBlock, false));
                 }
             }
         }
 
-        if (CheckIncentive(this.lstProductionBuffs))
+        if (CheckIncentive(lstProductionBuffs))
         {
-            if (this.lstBeds.Contains(checkBlock.Block.GetBlockName()))
+            if (lstBeds.Contains(checkBlock.Block.GetBlockName()))
             {
                 DisplayLog(" My target block is in my approved list. ");
-                TileEntityLootContainer tileEntityLootContainer = this.theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
+                TileEntityLootContainer tileEntityLootContainer = theEntity.world.GetTileEntity(Voxel.voxelRayHitInfo.hit.clrIdx, new Vector3i(seekPos)) as TileEntityLootContainer;
                 if (tileEntityLootContainer != null)
                 {
                     DisplayLog(" It's a TileEntity. That's good.");
-                    foreach (ProductionItem item in this.lstProductionItem)
+                    foreach (ProductionItem item in lstProductionItem)
                     {
                         DisplayLog(" Adding " + item.item.GetItemId());
                         // Add the item to the loot container, and reset the cvar, if it's available.
                         tileEntityLootContainer.AddItem(new ItemStack(item.item, item.Count));
-                        if (!String.IsNullOrEmpty(item.cvar) && this.theEntity.Buffs.HasBuff(item.cvar))
+                        if (!String.IsNullOrEmpty(item.cvar) && theEntity.Buffs.HasBuff(item.cvar))
                         {
-                            this.theEntity.Buffs.CVars[item.cvar] = 0;
-                            this.theEntity.Buffs.RemoveBuff(this.strProductionFinishedBuff, true);
+                            theEntity.Buffs.CVars[item.cvar] = 0;
+                            theEntity.Buffs.RemoveBuff(strProductionFinishedBuff, true);
                         }
                     }
                 }
@@ -516,9 +514,9 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             DisplayLog(" No Bed Time buff incentive");
         }
 
-        DisplayLog("After: " + this.theEntity.ToString());
-        this.theEntity.SetInvestigatePosition(Vector3.zero, 0);
-        this.theEntity.Buffs.AddBuff("buffMaslowCoolDown", -1, true);
+        DisplayLog("After: " + theEntity.ToString());
+        theEntity.SetInvestigatePosition(Vector3.zero, 0);
+        theEntity.Buffs.AddBuff("buffMaslowCoolDown", -1, true);
         return false;
     }
 
@@ -647,32 +645,32 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     // Check if the entity needs to poop, and where it should go.
     public virtual bool CheckForSanitation()
     {
-        if (!CheckIncentive(this.lstSanitationBuffs))
+        if (!CheckIncentive(lstSanitationBuffs))
             return false;
 
-        if (this.lstSanitation.Count > 0)
+        if (lstSanitation.Count > 0)
         {
-            Vector3 TargetBlock = ScanForTileEntityInList(this.lstSanitation, new List<string>());
+            Vector3 TargetBlock = ScanForTileEntityInList(lstSanitation, new List<string>());
             if (TargetBlock == Vector3.zero)
                 return false;
 
-            this.theEntity.SetInvestigatePosition(TargetBlock, 120);
+            theEntity.SetInvestigatePosition(TargetBlock, 120);
         }
         return true;
     }
 
     public virtual bool CheckForProductionBuff()
     {
-        if (!CheckIncentive(this.lstProductionBuffs))
+        if (!CheckIncentive(lstProductionBuffs))
             return false;
 
         // If it's an egg producing entity, scan for a bed to hatch.
-        if (this.theEntity.Buffs.HasBuff(strProductionFinishedBuff))
+        if (theEntity.Buffs.HasBuff(strProductionFinishedBuff))
         {
-            Vector3 TargetBlock = ScanForTileEntityInList(this.lstBeds, new List<String>());
+            Vector3 TargetBlock = ScanForTileEntityInList(lstBeds, new List<String>());
             if (TargetBlock != Vector3.zero)
             {
-                this.theEntity.SetInvestigatePosition(TargetBlock, 120);
+                theEntity.SetInvestigatePosition(TargetBlock, 120);
                 return true;
             }
         }
@@ -681,11 +679,11 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     // Check if the entity is hungry and if there's a food bin nearby.
     public virtual bool CheckForFoodBin()
     {
-        if (!CheckIncentive(this.lstHungryBuffs))
+        if (!CheckIncentive(lstHungryBuffs))
             return false;
 
         DisplayLog(" Checking for food in inventory:");
-        if (CheckContents(this.theEntity.lootContainer, this.lstFoodItems, "Food") != null)
+        if (CheckContents(theEntity.lootContainer, lstFoodItems, "Food") != null)
         {
             DisplayLog(" Found Food in the backpack");
             // this.theEntity.SetInvestigatePosition(this.theEntity.position, 120);
@@ -693,36 +691,36 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
             return true;
         }
         DisplayLog(" Checking For Food");
-        Vector3 TargetBlock = ScanForTileEntityInList(this.lstFoodBins, this.lstFoodItems);
+        Vector3 TargetBlock = ScanForTileEntityInList(lstFoodBins, lstFoodItems);
         if (TargetBlock == Vector3.zero)
             return false;
 
-        this.theEntity.SetInvestigatePosition(TargetBlock, 120);
+        theEntity.SetInvestigatePosition(TargetBlock, 120);
         return true;
     }
 
     // Scans for the water block in the area.
     public virtual bool CheckForWaterBlock()
     {
-        if (!CheckIncentive(this.lstThirstyBuffs))
+        if (!CheckIncentive(lstThirstyBuffs))
             return false;
 
         // This check is if we are a baby, and are seeking the mother to satisfy thirst.
         if (GetEntityWater() > 0f)
             return true;
 
-        if (CheckContents(this.theEntity.lootContainer, this.lstWaterItems, "Water") != null)
+        if (CheckContents(theEntity.lootContainer, lstWaterItems, "Water") != null)
         {
             DisplayLog(" Found Water in the backpack");
             //  this.theEntity.SetInvestigatePosition(this.theEntity.position, 120);
             PerformAction();
             return true;
         }
-        Vector3 TargetBlock = ScanForBlockInList(this.lstWaterBins);
+        Vector3 TargetBlock = ScanForBlockInList(lstWaterBins);
         if (TargetBlock == Vector3.zero)
             return false;
 
-        this.theEntity.SetInvestigatePosition(TargetBlock, 120);
+        theEntity.SetInvestigatePosition(TargetBlock, 120);
         return true;
     }
     public virtual Vector3 ScanForTileEntityInList(List<String> lstBlocks, List<String> lstContents)
@@ -737,7 +735,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
 
 
         // Otherwise, search for your new home.
-        Vector3i blockPosition = this.theEntity.GetBlockPosition();
+        Vector3i blockPosition = theEntity.GetBlockPosition();
         int num = World.toChunkXZ(blockPosition.x);
         int num2 = World.toChunkXZ(blockPosition.z);
         for (int i = -1; i < 2; i++)
@@ -788,7 +786,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         Vector3 tMin = new Vector3();
         tMin = Vector3.zero;
         float minDist = Mathf.Infinity;
-        Vector3 currentPos = this.theEntity.position;
+        Vector3 currentPos = theEntity.position;
         foreach (Vector3 block in localLists)
         {
             float dist = Vector3.Distance(block, currentPos);
@@ -805,10 +803,10 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     // This will search for a mother entity to see it can satisfy its thirst from its mother, rather than a traditional water block.
     public virtual float GetEntityWater()
     {
-        if (this.theEntity.Buffs.HasCustomVar("Mother"))
+        if (theEntity.Buffs.HasCustomVar("Mother"))
         {
-            float MotherID = this.theEntity.Buffs.GetCustomVar("Mother");
-            EntityAliveSDX MotherEntity = this.theEntity.world.GetEntity((int)MotherID) as EntityAliveSDX;
+            float MotherID = theEntity.Buffs.GetCustomVar("Mother");
+            EntityAliveSDX MotherEntity = theEntity.world.GetEntity((int)MotherID) as EntityAliveSDX;
             if (MotherEntity)
             {
                 DisplayLog(" My Mother is: " + MotherEntity.EntityName);
@@ -816,7 +814,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
                 {
                     DisplayLog("Heading to mommy");
                     float MilkLevel = MotherEntity.Buffs.GetCustomVar("MilkLevel");
-                    this.theEntity.SetInvestigatePosition(this.theEntity.world.GetEntity((int)MotherID).position, 60);
+                    theEntity.SetInvestigatePosition(theEntity.world.GetEntity((int)MotherID).position, 60);
                     return MilkLevel;
                 }
             }
@@ -830,10 +828,10 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     // Scans for the water block in the area.
     public virtual bool CheckForHomeBlock()
     {
-        if (this.lstHomeBlocks.Count == 0)
+        if (lstHomeBlocks.Count == 0)
             return false;
 
-        Vector3 TargetBlock = ScanForBlockInList(this.lstHomeBlocks);
+        Vector3 TargetBlock = ScanForBlockInList(lstHomeBlocks);
         if (TargetBlock == Vector3.zero)
             return false;
 
@@ -841,7 +839,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         position.x = Utils.Fastfloor(TargetBlock.x);
         position.z = Utils.Fastfloor(TargetBlock.z);
         position.y = Utils.Fastfloor(TargetBlock.y);
-        this.theEntity.setHomeArea(position, this.MaxDistance);
+        theEntity.setHomeArea(position, MaxDistance);
         return true;
     }
     // The method will scan a distance of MaxDistance around the entity, finding the nearest block that matches in the list.
@@ -858,11 +856,11 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         Vector3i blockPosition = theEntity.GetBlockPosition();
         Vector3i TargetBlockPosition = new Vector3i();
 
-        for (var x = (int)blockPosition.x - this.MaxDistance; x <= blockPosition.x + this.MaxDistance; x++)
+        for (var x = blockPosition.x - MaxDistance; x <= blockPosition.x + MaxDistance; x++)
         {
-            for (var z = (int)blockPosition.z - this.MaxDistance; z <= blockPosition.z + this.MaxDistance; z++)
+            for (var z = blockPosition.z - MaxDistance; z <= blockPosition.z + MaxDistance; z++)
             {
-                for (var y = (int)blockPosition.y - 5; y <= blockPosition.y + 5; y++)
+                for (var y = blockPosition.y - 5; y <= blockPosition.y + 5; y++)
                 {
                     TargetBlockPosition.x = x;
                     TargetBlockPosition.y = y;
@@ -882,7 +880,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         Vector3 TargetBlock = new Vector3();
         TargetBlock = Vector3.zero;
         float minDist = Mathf.Infinity;
-        Vector3 currentPos = this.theEntity.position;
+        Vector3 currentPos = theEntity.position;
         foreach (Vector3 block in localLists)
         {
             float dist = Vector3.Distance(block, currentPos);
@@ -900,16 +898,16 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
     public virtual bool IsSheltered(Vector3i position)
     {
         // We only want to check air positions.
-        if (this.theEntity.world.GetBlock(position).type != 0)
+        if (theEntity.world.GetBlock(position).type != 0)
             return false;
 
         float num = 1f;
         int x = position.x;
         int y = position.y;
         int z = position.z;
-        IChunk chunkFromWorldPos = this.theEntity.world.GetChunkFromWorldPos(x, y, z);
+        IChunk chunkFromWorldPos = theEntity.world.GetChunkFromWorldPos(x, y, z);
 
-        num = (float)Mathf.Max((int)chunkFromWorldPos.GetLight(x, y, z, Chunk.LIGHT_TYPE.SUN), (int)chunkFromWorldPos.GetLight(x, y + 1, z, Chunk.LIGHT_TYPE.SUN));
+        num = Mathf.Max(chunkFromWorldPos.GetLight(x, y, z, Chunk.LIGHT_TYPE.SUN), chunkFromWorldPos.GetLight(x, y + 1, z, Chunk.LIGHT_TYPE.SUN));
         num /= 15f;
         return (1f - num > 0.3f);
 
@@ -945,15 +943,15 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         DisplayLog(" Shelter is needed: ");
         List<Vector3> ShelteredBlocks = new List<Vector3>();
 
-        Vector3i blockPosition = World.worldToBlockPos(this.theEntity.GetPosition());
-        IChunk chunkFromWorldPos = this.theEntity.world.GetChunkFromWorldPos(blockPosition);
+        Vector3i blockPosition = World.worldToBlockPos(theEntity.GetPosition());
+        IChunk chunkFromWorldPos = theEntity.world.GetChunkFromWorldPos(blockPosition);
         Vector3i currentBlock = new Vector3i();
 
-        for (var x = (int)blockPosition.x - this.MaxDistance; x <= blockPosition.x + this.MaxDistance; x++)
+        for (var x = blockPosition.x - MaxDistance; x <= blockPosition.x + MaxDistance; x++)
         {
-            for (var z = (int)blockPosition.z - this.MaxDistance; z <= blockPosition.z + this.MaxDistance; z++)
+            for (var z = blockPosition.z - MaxDistance; z <= blockPosition.z + MaxDistance; z++)
             {
-                for (var y = (int)blockPosition.y - 5; y <= blockPosition.y + 5; y++)
+                for (var y = blockPosition.y - 5; y <= blockPosition.y + 5; y++)
                 {
                     currentBlock.x = x;
                     currentBlock.y = y;
@@ -982,7 +980,7 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         Vector3 tMin = new Vector3();
         tMin = Vector3.zero;
         float minDist = Mathf.Infinity;
-        Vector3 currentPos = this.theEntity.position;
+        Vector3 currentPos = theEntity.position;
         foreach (Vector3 block in ShelteredBlocks)
         {
             float dist = Vector3.Distance(block, currentPos);
@@ -996,8 +994,8 @@ class EAIMaslowLevel1SDX : EAIApproachSpot
         if (tMin != Vector3.zero)
         {
             DisplayLog(" Close shelter is: " + tMin.ToString());
-            this.theEntity.SetInvestigatePosition(tMin, 100);
-            this.theEntity.setHomeArea(new Vector3i(tMin), 50);
+            theEntity.SetInvestigatePosition(tMin, 100);
+            theEntity.setHomeArea(new Vector3i(tMin), 50);
             return true;
         }
 

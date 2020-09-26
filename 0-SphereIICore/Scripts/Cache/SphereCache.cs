@@ -1,9 +1,9 @@
-﻿using System;
+﻿
+using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
 using UnityEngine;
+
+
 
 public static class SphereCache
 {
@@ -15,6 +15,11 @@ public static class SphereCache
 
     public static List<Vector3i> caveChunks = new List<Vector3i>(); //static list somewhere
     public static List<Vector3i> caveEntrances = new List<Vector3i>();
+
+    public static FastNoise fastNoise = null;
+    public static List<String> POIs = new List<string>();
+    public static List<String> DeepCavePrefabs = new List<string>();
+
     public static Vector3i[] FindRandomPoints(int count)
     {
         Vector3i _minSize;
@@ -27,13 +32,60 @@ public static class SphereCache
         for (int i = 0; i < count; i++)
         {
             // Be sure we are within the bounds of the world.
-            int x = (int)Math.Round(Utils.Fastfloor(GameManager.Instance.World.GetGameRandom().RandomRange(_minSize.x + 16, _maxSize.x  - 16)) / 16.0) * 16;
-            int z = (int)Math.Round(Utils.Fastfloor(GameManager.Instance.World.GetGameRandom().RandomRange(_minSize.z + 16, _maxSize.z  - 16)) / 16.0) * 16;
+            int x = (int)Math.Round(Utils.Fastfloor(GameManager.Instance.World.GetGameRandom().RandomRange(_minSize.x + 16, _maxSize.x - 16)) / 16.0) * 16;
+            int z = (int)Math.Round(Utils.Fastfloor(GameManager.Instance.World.GetGameRandom().RandomRange(_minSize.z + 16, _maxSize.z - 16)) / 16.0) * 16;
             positions[i].x = x;
             positions[i].z = z;
         }
 
         return positions;
+    }
+
+    public static FastNoise GetFastNoise(Chunk chunk)
+    {
+        string AdvFeatureClass = "CaveConfiguration";
+
+        if (fastNoise != null)
+        {
+            if (chunk != null)
+                fastNoise.SetSeed(chunk.GetHashCode());
+            else
+                fastNoise.SetSeed(0);
+
+            return fastNoise;
+        }
+
+
+        fastNoise = new FastNoise();
+
+        // Read in the available POIs
+        foreach (String poi in Configuration.GetPropertyValue(AdvFeatureClass, "CavePOIs").Split(','))
+            POIs.Add(poi);
+
+        foreach (String poi in Configuration.GetPropertyValue(AdvFeatureClass, "DeepCavePrefabs").Split(','))
+            DeepCavePrefabs.Add(poi);
+
+        int Octaves = int.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "Octaves"));
+        float Lacunarity = float.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "Lacunarity"));
+        float Gain = float.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "Gain"));
+        float Frequency = float.Parse(Configuration.GetPropertyValue(AdvFeatureClass, "Frequency"));
+
+        FastNoise.FractalType fractalType = EnumUtils.Parse<FastNoise.FractalType>(Configuration.GetPropertyValue(AdvFeatureClass, "FractalType"), false);
+        FastNoise.NoiseType noiseType = EnumUtils.Parse<FastNoise.NoiseType>(Configuration.GetPropertyValue(AdvFeatureClass, "NoiseType"), false);
+
+        fastNoise.SetFractalType(fractalType);
+        fastNoise.SetNoiseType(noiseType);
+        fastNoise.SetFractalOctaves(Octaves);
+        fastNoise.SetFractalLacunarity(Lacunarity);
+        fastNoise.SetFractalGain(Gain);
+        fastNoise.SetFrequency(Frequency);
+
+        if (chunk != null)
+            fastNoise.SetSeed(chunk.GetHashCode());
+        else
+            fastNoise.SetSeed(0);
+
+        return fastNoise;
     }
     public static void GenerateCaveChunks(int CaveEntrances = 2)
     {
@@ -46,7 +98,7 @@ public static class SphereCache
 
             String display = "Searching for " + MaxCount + " Cave Clusters. Each Cave Cluster will include " + ClusterSize + " chunks...";
             AdvLogging.DisplayLog(AdvFeatureClass, display);
-           
+
             Vector3i[] RandomCavePoints = FindRandomPoints(MaxCount);
             //for (int x = 0; x < 10; x++)
             //{
@@ -55,7 +107,7 @@ public static class SphereCache
                 Vector3i randomChunkPosition = RandomCavePoints[i]; //vector3i world pos
                 var caveRadius = ClusterSize;
 
-                for (int x = 0; x < CaveEntrances; x++ )
+                for (int x = 0; x < CaveEntrances; x++)
                 {
                     //find a random x/z inside the bounds of the cave
                     int entranceX = Utils.Fastfloor(GameManager.Instance.World.GetGameRandom().RandomRange(randomChunkPosition.x, randomChunkPosition.x + (caveRadius * 16)));

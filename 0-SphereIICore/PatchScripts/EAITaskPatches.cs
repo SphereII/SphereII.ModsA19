@@ -1,13 +1,11 @@
-using System;
-using SDX.Compiler;
 using Mono.Cecil;
-using Mono.Cecil.Cil;
+using SDX.Compiler;
+using System;
 using System.Linq;
-using System.Collections.Generic;
 
 public class EAITaskPatches : IPatcherMod
 {
-   
+
 
     // Inorder to update the GetWalk Type, we'll need to mark the GetWalkType to be virtual, so we can over-ride it.
     public bool Patch(ModuleDefinition module)

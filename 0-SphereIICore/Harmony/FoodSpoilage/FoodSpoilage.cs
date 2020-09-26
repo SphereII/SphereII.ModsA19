@@ -1,9 +1,6 @@
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
 using UnityEngine;
 
 
@@ -50,8 +47,8 @@ using UnityEngine;
  */
 public class SphereII_FoodSpoilage
 {
-    private static string AdvFeatureClass = "FoodSpoilage";
-    private static string Feature = "FoodSpoilage";
+    private static readonly string AdvFeatureClass = "FoodSpoilage";
+    private static readonly string Feature = "FoodSpoilage";
 
 
     [HarmonyPatch(typeof(ItemValue))]
@@ -80,7 +77,7 @@ public class SphereII_FoodSpoilage
             return __result;
         }
     }
-    
+
     // NextSpoilageTick in ItemValue is an int, but when writen it gets converted over to a ushort, and re-read as an int. This could be due to refactoring of base code,
     // since none of these calls need to be ushort, change the ushort to just cast as an int.
     [HarmonyPatch(typeof(ItemValue))]
@@ -89,10 +86,10 @@ public class SphereII_FoodSpoilage
     {
         public static void Postfix(BinaryWriter _bw, ItemValue __instance)
         {
-            _bw.Write((float)__instance.CurrentSpoilage);
-            _bw.Write((float)__instance.NextSpoilageTick);
+            _bw.Write(__instance.CurrentSpoilage);
+            _bw.Write(__instance.NextSpoilageTick);
         }
-     
+
     }
 
 
@@ -136,7 +133,7 @@ public class SphereII_FoodSpoilage
                         TierColor = 7;
 
                     // allow over-riding of the color.
-                    if(__instance.ItemStack.itemValue.ItemClass.Properties.Contains("QualityTierColor"))
+                    if (__instance.ItemStack.itemValue.ItemClass.Properties.Contains("QualityTierColor"))
                         TierColor = __instance.ItemStack.itemValue.ItemClass.Properties.GetInt("QualityTierColor");
 
                     __instance.durability.Color = QualityInfo.GetQualityColor(TierColor);
@@ -327,7 +324,7 @@ public class SphereII_FoodSpoilage
 
                             if (itemStack.itemValue.ItemClass.GetItemName() != __instance.ItemStack.itemValue.ItemClass.GetItemName())
                             {
-                                if (!LocalPlayerUI.GetUIForPlayer(player as EntityPlayerLocal).xui.PlayerInventory.AddItem(itemStack, true))
+                                if (!LocalPlayerUI.GetUIForPlayer(player).xui.PlayerInventory.AddItem(itemStack, true))
                                 {
                                     player.world.gameManager.ItemDropServer(itemStack, player.GetPosition(), Vector3.zero, -1, 60f, false);
                                 }

@@ -1,10 +1,6 @@
 using HarmonyLib;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Reflection.Emit;
-using UnityEngine;
 
 /**
  * SphereII_EntityAlive_Patches
@@ -34,7 +30,7 @@ class SphereII_EntityAlive_Patches
             {
                 __instance.factionId = _br.ReadByte();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // Fail safe for first load up
             }

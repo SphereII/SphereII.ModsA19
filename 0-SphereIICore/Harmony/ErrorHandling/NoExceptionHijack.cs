@@ -9,8 +9,8 @@ using HarmonyLib;
  */
 public class SphereII_NoExceptionHijack
 {
-    private static string AdvFeatureClass = "ErrorHandling";
-    private static string Feature = "NoExceptionHijack";
+    private static readonly string AdvFeatureClass = "ErrorHandling";
+    private static readonly string Feature = "NoExceptionHijack";
 
     [HarmonyPatch(typeof(GUIWindowConsole))]
     [HarmonyPatch("openConsole")]
@@ -18,13 +18,13 @@ public class SphereII_NoExceptionHijack
     {
         static bool Prefix()
         {
-            if(!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
                 return true;
 
             return false;
         }
 
-    }    
+    }
 }
 
 

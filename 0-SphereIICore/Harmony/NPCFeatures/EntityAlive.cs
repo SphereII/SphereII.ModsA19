@@ -1,10 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using UnityEngine;
 
 
 /**
@@ -15,8 +9,8 @@ using UnityEngine;
  */
 public class SphereII__EntityAlivePatcher
 {
-    private static string AdvFeatureClass = "AdvancedNPCFeatures";
-    private static string Feature = "EnhancedFeatures";
+    private static readonly string AdvFeatureClass = "AdvancedNPCFeatures";
+    private static readonly string Feature = "EnhancedFeatures";
 
 
     [HarmonyPatch(typeof(EntityAlive))]

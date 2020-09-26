@@ -1,8 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.Reflection;
-using UnityEngine;
 
 
 /**
@@ -13,8 +9,8 @@ using UnityEngine;
  */
 public class SphereII_Progression
 {
-    private static string AdvFeatureClass = "AdvancedProgression";
-    private static string Feature = "ZeroXP";
+    private static readonly string AdvFeatureClass = "AdvancedProgression";
+    private static readonly string Feature = "ZeroXP";
 
     [HarmonyPatch(typeof(Progression))]
     [HarmonyPatch("AddLevelExpRecursive")]

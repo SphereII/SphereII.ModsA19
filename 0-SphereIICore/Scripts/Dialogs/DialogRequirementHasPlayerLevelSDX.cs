@@ -1,7 +1,6 @@
-﻿using UnityEngine;
-public class DialogRequirementHasPlayerLevelSDX : BaseDialogRequirement
+﻿public class DialogRequirementHasPlayerLevelSDX : BaseDialogRequirement
 {
-    private static string AdvFeatureClass = "AdvancedDialogDebugging";
+    private static readonly string AdvFeatureClass = "AdvancedDialogDebugging";
 
     public string strOperator = "eq";
     public override bool CheckRequirement(EntityPlayer player, EntityNPC talkingTo)
@@ -21,47 +20,47 @@ public class DialogRequirementHasPlayerLevelSDX : BaseDialogRequirement
             float flValue = 0f;
             float.TryParse(Value, out flValue);
             float flPlayerValue = player.Buffs.GetCustomVar(ID);
-            AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: " + " Value: " + flValue + " Player Value: " + flPlayerValue + " Operator: " + strOperator);
+            AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: " + " Value: " + flValue + " Player Value: " + flPlayerValue + " Operator: " + strOperator);
 
 
             if (strOperator.ToLower() == "lt")
             {
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Checking for LT: " + flPlayerValue + " < " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Checking for LT: " + flPlayerValue + " < " + flValue);
                 if (flPlayerValue < flValue)
                     return true;
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Failed for LT: " + flPlayerValue + " < " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Failed for LT: " + flPlayerValue + " < " + flValue);
             }
             else if (strOperator.ToLower() == "lte")
             {
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Checking for LTE: " + flPlayerValue + " <= " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Checking for LTE: " + flPlayerValue + " <= " + flValue);
                 if (flPlayerValue <= flValue)
                     return true;
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Failed for GT: " + flPlayerValue + " > " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Failed for GT: " + flPlayerValue + " > " + flValue);
             }
             else if (strOperator.ToLower() == "gt")
             {
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Checking for GT: " + flPlayerValue + " > " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Checking for GT: " + flPlayerValue + " > " + flValue);
                 if (flPlayerValue > flValue)
                     return true;
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Failed for GT: " + flPlayerValue + " > " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Failed for GT: " + flPlayerValue + " > " + flValue);
             }
             else if (strOperator.ToLower() == "gte")
             {
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Checking for GTE: " + flPlayerValue + " >= " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Checking for GTE: " + flPlayerValue + " >= " + flValue);
                 if (flPlayerValue >= flValue)
                     return true;
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Failed for GTE: " + flPlayerValue + " >= " + flValue);
-            }
-     
-            else
-            {
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Checking for equality: " + flPlayerValue + " == " + flValue);
-                if (flValue == flPlayerValue)
-                    return true;
-                AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " HasPlayerLevel: Failed for equality: " + flPlayerValue + " == " + flValue);
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Failed for GTE: " + flPlayerValue + " >= " + flValue);
             }
 
-            AdvLogging.DisplayLog(AdvFeatureClass, this.GetType() + " Is Level: " + "  Value: " + flValue + " Player Value: " + flPlayerValue + " Operator: " + strOperator + " :: No Result");
+            else
+            {
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Checking for equality: " + flPlayerValue + " == " + flValue);
+                if (flValue == flPlayerValue)
+                    return true;
+                AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " HasPlayerLevel: Failed for equality: " + flPlayerValue + " == " + flValue);
+            }
+
+            AdvLogging.DisplayLog(AdvFeatureClass, GetType() + " Is Level: " + "  Value: " + flValue + " Player Value: " + flPlayerValue + " Operator: " + strOperator + " :: No Result");
 
         }
         else if (strOperator.ToLower() == "not")

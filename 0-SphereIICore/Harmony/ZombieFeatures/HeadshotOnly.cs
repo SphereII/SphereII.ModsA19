@@ -1,8 +1,4 @@
-using DMT;
 using HarmonyLib;
-using System;
-using System.IO;
-using UnityEngine;
 
 
 /**
@@ -12,8 +8,8 @@ using UnityEngine;
  */
 public class SphereII_HeadshotOnly
 {
-    private static string AdvFeatureClass = "AdvancedZombieFeatures";
-    private static string Feature = "HeadshotOnly";
+    private static readonly string AdvFeatureClass = "AdvancedZombieFeatures";
+    private static readonly string Feature = "HeadshotOnly";
 
     // Give a damage boost to headshots
     [HarmonyPatch(typeof(EntityAlive))]
@@ -23,10 +19,10 @@ public class SphereII_HeadshotOnly
         public static bool Prefix(EntityAlive __instance, ref DamageSource _damageSource, ref int _strength, bool _criticalHit, float _impulseScale)
         {
             // Apply a damage boost if there is a head shot.
-            if (__instance is EntityZombie )
+            if (__instance is EntityZombie)
             {
                 // No head shots for snakes.
-                if(__instance is EntityAnimalSnake)
+                if (__instance is EntityAnimalSnake)
                     return true;
 
                 if (_strength > 999)

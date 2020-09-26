@@ -1,5 +1,4 @@
 using HarmonyLib;
-using UnityEngine;
 
 /**
  * SphereII_EAITarget_Tweaks
@@ -46,12 +45,12 @@ class SphereII_EAITarget_Tweaks
 
                 // We have some complicated checks here, since this method gets called by 3 different target methods.
                 FactionManager.Relationship myRelationship = FactionManager.Instance.GetRelationshipTier(__instance.theEntity, _e);
-               // Debug.Log("Checking Relationship: " + myRelationship.ToString());
+                // Debug.Log("Checking Relationship: " + myRelationship.ToString());
                 switch (myRelationship)
                 {
                     case FactionManager.Relationship.Hate:
                         return true;
-                    
+
                     case FactionManager.Relationship.Dislike:
                     case FactionManager.Relationship.Neutral:
                         // If you don't like them, or are more or less neutral to them, 
