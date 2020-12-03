@@ -52,7 +52,8 @@ public class EntityAliveSDX : EntityNPC
 
     public override string ToString()
     {
-        return EntityUtilities.DisplayEntityStats(entityId);
+        return entityName;
+        //return EntityUtilities.DisplayEntityStats(entityId);
     }
 
 
@@ -258,6 +259,14 @@ public class EntityAliveSDX : EntityNPC
         if (IsDead() || NPCInfo == null)
             return new EntityActivationCommand[0];
 
+        FactionManager.Relationship myRelationship = FactionManager.Instance.GetRelationshipTier(this, _entityFocusing);
+        if (myRelationship == FactionManager.Relationship.Hate)
+            return new EntityActivationCommand[0];
+
+        // If not a human, don't talk to them
+        if (!EntityUtilities.IsHuman(entityId))
+            return new EntityActivationCommand[0];
+
         return new EntityActivationCommand[]
         {
             new EntityActivationCommand("Greet " + EntityName, "talk" , true)
@@ -303,9 +312,9 @@ public class EntityAliveSDX : EntityNPC
                 return entityName;
 
             if (String.IsNullOrEmpty(strTitle))
-                return strMyName + " the " + base.EntityName;
+                return Localization.Get(strMyName);
             else
-                return strMyName + " the " + strTitle;
+                return Localization.Get( strMyName ) + " the " + Localization.Get( strTitle );
         }
         set
         {
@@ -417,24 +426,28 @@ public class EntityAliveSDX : EntityNPC
 
     public void SetupAutoPathingBlocks()
     {
-        if (Buffs.HasCustomVar("PathingCode"))
+        if (Buffs.HasCustomVar("PathingCode") && (Buffs.GetCustomVar("PathingCode") < 0 || Buffs.GetCustomVar("PathingCode" ) > 0 ) )
             return;
 
         // Check if pathing blocks are defined.
         List<string> Blocks = EntityUtilities.ConfigureEntityClass(entityId, "PathingBlocks");
         if (Blocks.Count == 0)
-            Blocks = new List<string>() { "PathingCube" };
+            return;
 
         //Scan for the blocks in the area
         List<Vector3> PathingVectors = ModGeneralUtilities.ScanForTileEntityInChunksListHelper(position, Blocks, entityId);
         if (PathingVectors == null || PathingVectors.Count == 0)
             return;
 
+     
         // Find the nearest block, and if its a sign, read its code.
         Vector3 target = ModGeneralUtilities.FindNearestBlock(position, PathingVectors);
         TileEntitySign tileEntitySign = GameManager.Instance.World.GetTileEntity(0, new Vector3i(target)) as TileEntitySign;
         if (tileEntitySign == null)
+        {
+
             return;
+        }
 
         // Since signs can have multiple codes, splite with a ,, parse each one.
         String text = tileEntitySign.GetText();
@@ -507,10 +520,12 @@ public class EntityAliveSDX : EntityNPC
     }
     public override void OnUpdateLive()
     {
-        if (emodel == null || emodel.avatarController == null)
-        {
-            return;
-        }
+
+        SetupAutoPathingBlocks();
+
+        if (Buffs.HasCustomVar("PathingCode") && Buffs.GetCustomVar("PathingCode") == -1)
+            EntityUtilities.SetCurrentOrder(this.entityId, EntityUtilities.Orders.Stay);
+
         // Wake them up if they are sleeping, since the trigger sleeper makes them go idle again.
         if (!sleepingOrWakingUp && isAlwaysAwake)
         {
@@ -522,14 +537,23 @@ public class EntityAliveSDX : EntityNPC
 
         Buffs.RemoveBuff("buffnewbiecoat", false);
         Stats.Health.MaxModifier = Stats.Health.Max;
-        emodel.avatarController.SetBool("CanFall", !emodel.IsRagdollActive && bodyDamage.CurrentStun == EnumEntityStunType.None && !isSwimming);
-        emodel.avatarController.SetBool("IsOnGround", onGround || isSwimming);
 
+        // Set CanFall and IsOnGround
+        if (emodel != null && emodel.avatarController != null)
+        {
+            emodel.avatarController.SetBool("CanFall", !emodel.IsRagdollActive && bodyDamage.CurrentStun == EnumEntityStunType.None && !isSwimming);
+            emodel.avatarController.SetBool("IsOnGround", onGround || isSwimming);
+        }
+
+
+        bool isHuman = false;
+        if (EntityUtilities.IsHuman(entityId))
+            isHuman = true;
 
         if (SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
         {
             //If blocked, check to see if its a door.
-            if (moveHelper.IsBlocked)
+            if (moveHelper.IsBlocked && isHuman)
             {
                 Vector3i blockPos = moveHelper.HitInfo.hit.blockPos;
                 BlockValue block = world.GetBlock(blockPos);
@@ -564,7 +588,7 @@ public class EntityAliveSDX : EntityNPC
 
         // Check to see if we've opened a door, and close it behind you.
         Vector3i doorPos = SphereCache.GetDoor(entityId);
-        if (doorPos != Vector3i.zero)
+        if (doorPos != Vector3i.zero && isHuman)
         {
             DisplayLog("I've opened a door recently. I'll see if I can close it.");
             BlockValue block = world.GetBlock(doorPos);
@@ -593,12 +617,11 @@ public class EntityAliveSDX : EntityNPC
         if (target != null)
         {
             // makes the npc look at its attack target
-
-            emodel.SetLookAt(target.getHeadPosition());
+            if (emodel != null && emodel.avatarController != null)
+                emodel.SetLookAt(target.getHeadPosition());
 
             SetLookPosition(target.getHeadPosition());
-            RotateTo(target, 45, 45);
-
+            RotateTo(target, 30f, 30f);
             if (EntityUtilities.HasTask(entityId, "Ranged"))
             {
                 if (EntityUtilities.CheckAIRange(entityId, target.entityId))
@@ -624,7 +647,7 @@ public class EntityAliveSDX : EntityNPC
         base.OnUpdateLive();
 
         // Allow EntityAliveSDX to get buffs from blocks
-        if (!isEntityRemote)
+        if (!isEntityRemote &&  !SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
             updateBlockRadiusEffects();
 
         // No NPC info, don't continue
@@ -642,7 +665,7 @@ public class EntityAliveSDX : EntityNPC
         // If there is no attack target, don't bother checking this.
         if (target == null)
         {
-            if (this is EntityAliveFarmingAnimalSDX)
+            if (!EntityUtilities.IsHuman(entityId))
                 return;
 
             List<global::Entity> entitiesInBounds = GameManager.Instance.World.GetEntitiesInBounds(this, new Bounds(position, Vector3.one * 5f));

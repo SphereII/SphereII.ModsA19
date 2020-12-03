@@ -165,7 +165,7 @@ public class BlockMusicBox : BlockLoot
         BlockValue block = world.GetBlock(vector3i);
         EntityPlayerLocal entityPlayerLocal = array[3] as EntityPlayerLocal;
         TileEntityLootContainer tileEntityLootContainer = world.GetTileEntity(clrIdx, vector3i) as TileEntityLootContainer;
-        if (tileEntityLootContainer != null)
+        if (tileEntityLootContainer == null)
             world.GetGameManager().DropContentOfLootContainerServer(blockValue, vector3i, tileEntityLootContainer.entityId);
 
         // Pick up the item and put it inyor your inventory.

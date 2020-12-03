@@ -40,11 +40,14 @@ public class MinEventActionSpawnEntitySDX : MinEventActionRemoveBuff
                 {
                     NewEntity.SetSpawnerSource(EnumSpawnerSource.StaticSpawner);
                     GameManager.Instance.World.SpawnEntityInWorld(NewEntity);
+
                     if (NewEntity is EntityAlive)
                     {
                         Debug.Log("Setting " + strCvar + " ID to: " + entity.entityId + " for " + NewEntity.entityId);
                         (NewEntity as EntityAlive).Buffs.SetCustomVar(strCvar, entity.entityId, true);
+                        EntityUtilities.SetCurrentOrder(NewEntity.entityId, EntityUtilities.Orders.Follow);
                     }
+
                 }
                 else
                 {

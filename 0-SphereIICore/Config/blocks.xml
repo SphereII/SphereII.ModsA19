@@ -29,6 +29,14 @@
         <property name="Logging" value="false"/>
       </property>
 
+      <property class="AdvancedLockpicking" >
+        <property name="Logging" value="false"/>
+        <property name="AdvancedLocks" value="true" />
+        <property name="LockPrefab" value="#@modfolder(Locks):Resources/Locks.unity3d?Lockset01" />
+      </property>
+
+
+
       <property class="AdvancedItemFeatures" >
         <property name="Logging" value="false"/>
         <property name="AdvancedItemRepair" value="false" />
@@ -101,6 +109,11 @@
 
       </property>
 
+      <!-- Allow themed settings to be applied: See Harmony/Atmosphere/-->
+      <property class="Theme" >
+        <property name="Spook" value="true"/>
+      </property>
+      
       <property class="AdvancedWorkstationFeatures" >
         <property name="Logging" value="false"/>
         <property name="EnablePoweredWorkstations" value="true" />
@@ -136,11 +149,11 @@
           https://github.com/Auburns/FastNoise/releases
       -->
         <property name="Logging" value="false"/>
-        <property name="CaveEnabled" value="false"/>
+        <property name="CaveEnabled" value="true"/>
 
         <!-- Generate cave system only in mountains (above terrain height 100, or random through the map. All for every chunk has a cave system ) -->
         <!-- Deep Mountains will produce up to 100 levels, or until it reaches bedrock. This could cause lag during generation and an FPS drop. -->
-        <property name="CaveType" value="Random" />
+        <property name="CaveType" value="All" />
         <!-- Mountains, Random, All, DeepMountains -->
 
         <!-- Default is up to 5 levels, depending on depth of terrain. Note: This value is ignored if DeepMountains is selected -->
@@ -168,19 +181,19 @@
         <!-- higher numbers will result in more vertical drops. A lower number, less so. -->
         <property name="CaveThresholdY" value="0.01"/>
 
-        <!-- CavePOIs are placed where there is an isolated block (only one side of the block has air ), and a random roll between 0 to 10. Adjust this random roll here.-->
-        <property name="POIRandomRoll" value="1" /> <!-- 10% chance -->
-        
+        <!-- CavePOIs are placed where there is an isolated block (only one side of the block has air ), and a random roll between 0 to 100. Adjust this random roll here.-->
+        <property name="POIRandomRoll" value="8" />
+        <!-- 10% chance -->
+
         <!--https://leatherbee.org/index.php/2018/10/24/perlin-and-simplex-noise/#:~:text=Lacunarity%20and%20gain%20measure%20how,amplitude%20of%20the%20previous%20octave. -->
         <!-- Small adjustments are recommended. Large adjustments are.... inconsistent. -->
         <property name="Octaves" value="10"/>
         <property name="Lacunarity" value="1"/>
         <property name="Gain" value="0.5"/>
         <property name="Frequency" value="0.09"/>
-        <property name="CavePOIs" value="sphereii_cave_01,sphereii_cave_02,sphereii_cave_03,sphereii_cave_04,sphereii_cave_05,sphereii_cave_06,sphereii_cave_07,sphereii_cave_08,sphereii_cave_09,sphereii_cave_10" />
-        <property name="DeepCavePrefabs" value="sphereii_deepcaves_01" />
-
-        <property name="MaxPrefabPerChunk" value="6" />
+        <property name="CavePOIs" value="Chiko_SCcave_01,Chiko_SCcave_02,Chiko_SCcave_03,Chiko_SCcave_04,Chiko_SCcave_05,Chiko_SCcave_06,Chiko_SCcave_07" />
+        <property name="DeepCavePrefabs" value="Chiko_SCcave_08,Chiko_SCcave_09,Chiko_SCcave_11,Chiko_SCcave_12,Chiko_SCcave_13,Chiko_SCcave_14" /> <!-- removed chiko 10 for investigation -->
+        <property name="MaxPrefabPerChunk" value="1" />
       </property>
     </block>
 
@@ -192,6 +205,8 @@
       <property name="Material" value="Mair"/>
       <property name="CreativeMode" value="Player" />
       <property name="CanPickup" value="true"/>
+      <property name="Collide" value="sight"/>
+
     </block>
 
     <block name="PathingCube2">
@@ -204,21 +219,7 @@
       <property name="CanPlayersSpawnOn" value="true"/>
       <property name="CanPickup" value="true"/>
       <property name="TakeDelay" value="3" />
-    </block>
-
-    <block name="BlockSpawnerSDX">
-      <property name="Class" value="SpawnerSDX, Mods"/>
-      <property name="SpawnGroup" value="FriendlyAnimalsDesert" />
-      <property name="Task" value="Stay" />
-      <!-- Stay, Patrol, Wander -->
-      <property name="Material" value="Mair"/>
-      <property name="CreativeMode" value="Player" />
-      <property name="ImposterExclude" value="true" />
-      <property name="CanPlayersSpawnOn" value="true"/>
-      <property name="CanPickup" value="true"/>
-      <property name="TakeDelay" value="3" />
-      <property name="Shape" value="ModelEntity" />
-      <property name="Model" value="#@modfolder:Resources/PathingCube.unity3d?PathingCube2"/>
+      <property name="Collide" value="sight"/>
     </block>
 
     <!-- Cave air block -->
@@ -240,5 +241,25 @@
       <property name="Extends" value="cntWastelandRandomLootHelper"/>
       <property name="CreativeMode" value="Dev"/>
     </block>
+
+    <block name="SpawnCube">
+      <property name="Extends" value="woodNoUpgradeMaster"/>
+      <property name="Model" value="#@modfolder:Resources/PathingCube.unity3d?PathingCube"/>
+      <!--property name="Model" value="Entities/Crafting/sign_wood_1x1_Prefab"/-->
+      <property name="Class" value="SpawnCubeSDX, Mods"/>
+      <property name="CreativeMode" value="Player"/>
+      <property name="Shape" value="ModelEntity"/>
+      <property name="HandleFace" value="South"/>
+      <property name="MultiBlockDim" value="1,1,1"/>
+      <property name="ImposterExchange" value="imposterDontBlockSheet" param1="43"/>
+      <property name="StabilitySupport" value="false"/>
+      <!-- build restriction -->
+      <property name="Place" value="TowardsPlacerInverted"/>
+      <property name="Group" value="Decor/Miscellaneous"/>
+      <property name="FilterTags" value="fdecor,fsigns,fother"/>
+      <property name="SortOrder1" value="70s0"/>
+      <drop event="Fall" count="0" prob="0"/>
+    </block>
+
   </append>
 </configs>

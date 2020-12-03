@@ -24,32 +24,36 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
     }
     public override bool CanExecute()
     {
-        bool result = base.CanExecute();
+        if (this.theEntity.sleepingOrWakingUp || this.theEntity.bodyDamage.CurrentStun != EnumEntityStunType.None || (this.theEntity.Jumping && !this.theEntity.isSwimming))
+            return false;
 
-        if (result && entityTarget != null)
-        {
-            if (EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
-                return false;
 
-            theEntity.SetLookPosition(entityTarget.getHeadPosition());
-            theEntity.RotateTo(entityTarget, 30f, 30f);
+        this.entityTarget = EntityUtilities.GetAttackOrReventTarget(this.theEntity.entityId) as EntityAlive;
+        if (this.entityTarget == null)
+            return false;
 
-            DisplayLog(" Has Task: " + EntityUtilities.HasTask(theEntity.entityId, "Ranged"));
+        if (EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
+            return false;
 
-            // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
-            if (EntityUtilities.HasTask(theEntity.entityId, "Ranged"))
-            {
-                if (result)
-                    result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
+        theEntity.SetLookPosition(entityTarget.getHeadPosition());
+        theEntity.RotateTo(entityTarget, 30f, 30f);
 
-            }
-        }
-        return result;
+        DisplayLog(" Has Task: " + EntityUtilities.HasTask(theEntity.entityId, "Ranged"));
+
+        // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
+        if (EntityUtilities.HasTask(theEntity.entityId, "Ranged") && EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId))
+            return false;
+
+        return true;
     }
 
     public override bool Continue()
     {
-        bool result = base.Continue();
+        if (this.theEntity.sleepingOrWakingUp || this.theEntity.bodyDamage.CurrentStun != EnumEntityStunType.None)
+            return false;
+
+        if (entityTarget == null)
+            return false;
 
         // Non zombies should continue to attack
         if (entityTarget.IsDead())
@@ -60,23 +64,14 @@ class EAIApproachAndAttackSDX : EAIApproachAndAttackTarget
             return false;
         }
 
-
-        if (result)
-        {
-
-
-            // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
-            if (EntityUtilities.HasTask(theEntity.entityId, "Ranged"))
-                result = !EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId);
-        }
-
-        if (!result)
-            return result;
+        // Don't execute the approach and attack if there's a ranged ai task, and they are still 4 blocks away
+        if (EntityUtilities.HasTask(theEntity.entityId, "Ranged") && EntityUtilities.CheckAIRange(theEntity.entityId, entityTarget.entityId))
+            return false;
 
         EntityUtilities.ChangeHandholdItem(theEntity.entityId, EntityUtilities.Need.Melee);
 
 
-        return result;
+        return true;
     }
 
 

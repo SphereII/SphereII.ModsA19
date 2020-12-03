@@ -603,7 +603,7 @@ public static class EntityUtilities
         {
             if (myEntity.GetAttackTarget() != null)
                 return myEntity.GetAttackTarget();
-            if (myEntity.GetRevengeTarget() == null)
+            if (myEntity.GetRevengeTarget() != null)
                 return myEntity.GetRevengeTarget();
         }
         return null;

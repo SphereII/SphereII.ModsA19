@@ -342,8 +342,8 @@ public static class ModGeneralUtilities
         float code = 0f;
         if (myEntity.Buffs.HasCustomVar("PathingCode"))
             code = EntityUtilities.GetCVarValue(EntityID, "PathingCode");
-        else
-            myEntity.Buffs.AddCustomVar("PathingCode", 0f);
+        //else
+        //    myEntity.Buffs.AddCustomVar("PathingCode", 0f);
 
         List<Vector3> localLists = new List<Vector3>();
         Vector3i TargetBlockPosition;
@@ -372,28 +372,28 @@ public static class ModGeneralUtilities
                             String text = tileEntitySign.GetText();
                             if (String.IsNullOrEmpty(text) && code == 0)
                             {
-                                localLists.Add(TargetBlockPosition.ToVector3() + Vector3.up);
+                                localLists.Add(TargetBlockPosition.ToVector3());
                                 continue;
                             }
                             foreach (String temp in text.Split(','))
                             {
                                 if (code.ToString() == temp || code == 0)
                                 {
-                                    localLists.Add(TargetBlockPosition.ToVector3() + Vector3.up);
+                                    localLists.Add(TargetBlockPosition.ToVector3() );
                                     break;
                                 }
                             }
                             continue;
                         }
+                        //else
+                        //    continue;
 
-                        BlockValue block = GameManager.Instance.World.GetBlock(TargetBlockPosition);
-                        if (block.ischild)
-                            continue;
+                   
 
-                        // if its not a listed block, then keep searching.
-                        if (!lstBlocks.Contains(block.Block.GetBlockName()))
-                            continue;
-                        localLists.Add(TargetBlockPosition.ToVector3());
+                        //// if its not a listed block, then keep searching.
+                        //if (!lstBlocks.Contains(block.Block.GetBlockName()))
+                        //    continue;
+                        //localLists.Add(TargetBlockPosition.ToVector3());
                     }
                 }
             }

@@ -20,16 +20,23 @@ class EAISetAsTargetIfHurtSDX : EAISetAsTargetIfHurt
             {
                 if (theEntity.GetRevengeTarget().entityId == myLeader.entityId)
                     return false;
+                if (EntityUtilities.IsAnAlly(theEntity.entityId, theEntity.GetRevengeTarget().entityId))
+                    return false;
             }
-
-
-            return true;
         }
-        else
-            return false;
-        ////bool result = base.CanExecute();
-        //DisplayLog(" Result of CanExecute(): " + result);
-        //return result;
+
+        if (theEntity.GetAttackTarget() != null)
+        {
+            Entity myLeader = EntityUtilities.GetLeaderOrOwner(theEntity.entityId);
+            if (myLeader)
+            {
+                if (theEntity.GetAttackTarget().entityId == myLeader.entityId)
+                    return false;
+                if (EntityUtilities.IsAnAlly(theEntity.entityId, theEntity.GetAttackTarget().entityId))
+                    return false;
+            }
+        }
+        return true;
     }
 
 }

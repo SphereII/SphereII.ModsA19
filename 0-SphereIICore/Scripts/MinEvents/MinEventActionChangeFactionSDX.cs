@@ -29,8 +29,7 @@ public class MinEventActionChangeFactionSDX : MinEventActionRemoveBuff
                     }
                     else
                     {
-                        Faction myFaction = FactionManager.Instance.GetFactionByName(entity.EntityName);
-                        if (myFaction != null && myFaction.ID == 0)
+                        if (FactionManager.Instance.GetFactionByName(entity.EntityName).ID == 0)
                         {
                             entity.factionId = FactionManager.Instance.CreateFaction(entity.EntityName, true, "").ID;
                             entity.factionRank = byte.MaxValue;
