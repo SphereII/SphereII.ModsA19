@@ -7,9 +7,6 @@ using UnityEngine;
 
 public class SphereII_CaveProject
 {
-
-    static bool Spook = true;
-
     private static readonly string AdvFeatureClass = "CaveConfiguration";
     private static readonly string Feature = "CaveEnabled";
     public class SphereII_CaveProject_Init : IHarmony
@@ -36,6 +33,13 @@ public class SphereII_CaveProject
         public static bool Prefix(float ___sunIntensity, float ___sMaxSunIntensity)
         {
 
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
+                return true;
+
+            if (GamePrefs.GetString(EnumGamePrefs.GameWorld) == "Empty" || GamePrefs.GetString(EnumGamePrefs.GameWorld) == "Playtesting")
+                return true;
+
+
             if (GameManager.Instance.World.GetPrimaryPlayer() == null)
                 return true;
 
@@ -48,6 +52,8 @@ public class SphereII_CaveProject
 
         public static void Postfix(float ___sunIntensity, float ___sMaxSunIntensity)
         {
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
+                return;
             if (GameManager.Instance.World.GetPrimaryPlayer() == null)
                 return;
 
@@ -304,21 +310,21 @@ public class SphereII_CaveProject
                 myEntity.SetSleeper();
             }
 
-           // Debug.Log("Spawning: " + myEntity.entityId + " " + vector );
+            // Debug.Log("Spawning: " + myEntity.entityId + " " + vector );
             GameManager.Instance.World.SpawnEntityInWorld(entity);
 
-            
+
             if (spawnDeadChance > 0f && gameRandom.RandomFloat < spawnDeadChance)
             {
                 entity.Kill(DamageResponse.New(true));
             }
             GameManager.Instance.World.DebugAddSpawnedEntity(entity);
-          
+
         }
     }
 
 
-  
+
     [HarmonyPatch(typeof(TerrainGeneratorWithBiomeResource))]
     [HarmonyPatch("GenerateTerrain")]
     [HarmonyPatch(new Type[] { typeof(World), typeof(Chunk), typeof(GameRandom), typeof(Vector3i), typeof(Vector3i), typeof(bool) })]
@@ -353,5 +359,5 @@ public class SphereII_CaveProject
         }
     }
 
-  
+
 }
