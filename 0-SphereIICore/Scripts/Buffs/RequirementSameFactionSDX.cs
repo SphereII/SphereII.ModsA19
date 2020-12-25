@@ -14,8 +14,8 @@ public class RequirementSameFactionSDX : TargetedCompareRequirementBase
         if (!base.ParamsValid(_params))
             return false;
         
-        Faction targetFaction  = FactionManager.Instance.GetFaction(this.target.factionId);
-        if (targetFaction .Name == strFaction)
+        Faction targetFaction = FactionManager.Instance.GetFaction(this.target.factionId);
+        if (targetFaction.Name == strFaction)
             return true;
 
         return false;
