@@ -1,75 +1,78 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Lockpicking;
+using System.Collections;
 using UnityEngine;
 
-class XUiC_PickLocking : XUiController
+
+// Simple XUI screen to enable the lock picking to have a window-style pop up.
+public class XUiC_PickLocking : XUiController
 {
     public static string ID = "";
-    public static GameObject lockPick = null;
-    private XUiC_TextInput txtPassword;
+    SphereII_Locks Lock;
+
+    // Reference to our current locked container
+    ILockable LockedItem;
+    BlockValue currentBlock;
+    Vector3i blockPos;
 
     public override void Init()
     {
+        Lock = new SphereII_Locks();
         XUiC_PickLocking.ID = windowGroup.ID;
         base.Init();
-        txtPassword = (XUiC_TextInput)base.GetChildById("txtPassword");
-
-        ((XUiC_SimpleButton)base.GetChildById("btnCancel")).OnPressed += BtnCancel_OnPressed;
-        ((XUiC_SimpleButton)base.GetChildById("btnOk")).OnPressed += BtnOk_OnPressed;
+        //Lock.Init();
     }
 
-    private void BtnOk_OnPressed(XUiController _sender, OnPressEventArgs _onPressEventArgs)
+    public override void Update(float _dt)
     {
+        base.Update(_dt);
+        if (this.LockedItem == null)
+            return;
 
-        GameManager.ShowTooltip(base.xui.playerUI.entityPlayer, "Closing Lock");
-        base.xui.playerUI.windowManager.Close(base.WindowGroup.ID);
+        // Check if the lock is open
+        if (Lock.IsLockOpened())
+        {
+                this.LockedItem.SetLocked(false);
+                OnClose();
+        }
     }
 
-    private void BtnCancel_OnPressed(XUiController _sender, OnPressEventArgs _e)
+    // Set the container reference so we can unlock it.
+    public static void Open(LocalPlayerUI _playerUi, ILockable _lockedItem, BlockValue _blockValue, Vector3i _blockPos)
     {
-        base.xui.playerUI.windowManager.Close(base.WindowGroup.ID);
+        // Configure the lock pick
+        _playerUi.xui.FindWindowGroupByName(XUiC_PickLocking.ID).GetChildByType<XUiC_PickLocking>().LockedItem = _lockedItem;
+        _playerUi.xui.FindWindowGroupByName(XUiC_PickLocking.ID).GetChildByType<XUiC_PickLocking>().currentBlock = _blockValue;
+        _playerUi.xui.FindWindowGroupByName(XUiC_PickLocking.ID).GetChildByType<XUiC_PickLocking>().blockPos = _blockPos;
+        _playerUi.windowManager.Open(XUiC_PickLocking.ID, true, false, true);
     }
 
+    // Set the player reference and display the lock.
     public override void OnOpen()
     {
         EntityPlayer player = base.xui.playerUI.entityPlayer;
         base.OnOpen();
+        Lock = new SphereII_Locks();
+
+        // Pass the Player reference to the lock before we enable.
+        Lock.Init(currentBlock, blockPos);
+        Lock.SetPlayer(player);
+        Lock.Enable();
+
+
         base.xui.playerUI.entityPlayer.PlayOneShot("open_sign", false);
-        if ( lockPick == null )
-        {
-            GameObject temp = DataLoader.LoadAsset<GameObject>("#@modfolder(0-SphereIICore):Resources/LockPick.unity3d?Button");
-            if (temp != null)
-            {
-                Debug.Log("Loaded Asset");
-                Camera mainCamera = GameObject.FindObjectOfType<Camera>();
-                Vector3 v3Pos = new Vector3(-0.15f, .5f, 10);
-                v3Pos = Camera.main.ViewportToWorldPoint(v3Pos);
-                lockPick = UnityEngine.Object.Instantiate<GameObject>(temp, v3Pos, Quaternion.identity);
-                if (lockPick != null)
-                {
-                    lockPick.transform.SetParent(base.xui.playerUI.uiCamera.transform);
-                    Vector3 local_offset = new Vector3(0f, 0f, 0f);
-                    Vector3 local_rotation = new Vector3(0f, 0f, 0f);
-                    Debug.Log("Lock Pick");
-                    lockPick.SetActive(true);
-                   // Utils.SetLayerRecursively(lockPick, 11);
-                }
-
-            }
-        }
-
     }
 
     public override void OnClose()
     {
+        if (Lock.IsLockOpened() )
+        {
+            Block.list[currentBlock.type].OnBlockActivated(GameManager.Instance.World, 0, blockPos, currentBlock, base.xui.playerUI.entityPlayer as EntityAlive);
+        }
+        Lock.Disable();
+        this.LockedItem = null;
         base.OnClose();
+        base.xui.playerUI.windowManager.Close(XUiC_PickLocking.ID);
         base.xui.playerUI.entityPlayer.PlayOneShot("close_sign", false);
+
     }
-
-
-
-
 }

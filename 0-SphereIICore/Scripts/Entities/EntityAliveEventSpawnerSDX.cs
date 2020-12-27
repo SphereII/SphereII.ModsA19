@@ -16,7 +16,7 @@ class EntityAliveEventSpawnerSDX : EntityAlive
             Debug.Log(GetType() + " : " + strMessage);
     }
 
-    public new void OnAddedToWorld()
+    public override void OnAddedToWorld()
     {
         DisplayLog("EntityClass: " + this.entityClass);
 

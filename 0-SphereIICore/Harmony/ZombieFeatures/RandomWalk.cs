@@ -32,11 +32,11 @@ public class SphereII_Transmogrifier
             // Check if this feature is enabled.
             if (Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
             {
-                if ((___walkType != 4) && __instance is EntityZombie)
+                if ((___walkType != 4 && ___walkType != 8 ) && __instance is EntityZombie)
                 {
 
                     // Distribution of Walk Types in an array. Adjust the numbers as you want for distribution. The 9 in the default int[9] indicates how many walk types you've specified.
-                    int[] numbers = new int[9] { 1, 2, 2, 3, 4, 5, 6, 7, 8 };
+                    int[] numbers = new int[9] { 1, 2, 2, 3, 4, 5, 6, 7,7 };
 
                     System.Random random = new System.Random();
 

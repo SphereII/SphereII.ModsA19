@@ -946,7 +946,7 @@ internal class EntityZombieFlyingSDX : EntityFlying
         return false;
     }
 
-    public new float GetEyeHeight()
+    public override float GetEyeHeight()
     {
         return 0.5f;
     }

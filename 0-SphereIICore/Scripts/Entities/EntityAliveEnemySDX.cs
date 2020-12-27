@@ -26,7 +26,7 @@ public class EntityAliveEnemySDX : EntityEnemy
 
     public System.Random random = new System.Random();
 
-    private readonly bool blDisplayLog = true;
+    private readonly bool blDisplayLog = false;
     public void DisplayLog(String strMessage)
     {
         if (blDisplayLog && !IsDead())
@@ -259,11 +259,10 @@ public class EntityAliveEnemySDX : EntityEnemy
         {
             // makes the npc look at its attack target
             if (emodel != null && emodel.avatarController != null)
-            {
                 emodel.SetLookAt(target.getHeadPosition());
-                SetLookPosition(target.getHeadPosition());
-                RotateTo(target, 45, 45);
-            }
+
+            SetLookPosition(target.getHeadPosition());
+            RotateTo(target, 45, 45);
         }
         Buffs.RemoveBuff("buffnewbiecoat", false);
         Stats.Health.MaxModifier = Stats.Health.Max;

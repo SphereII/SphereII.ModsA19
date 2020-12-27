@@ -29,7 +29,15 @@ class BlockPathFinding : BlockPlayerSign
         cmds[3].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
         cmds[4].enabled = ((!tileEntitySign.IsUserAllowed(@string) && tileEntitySign.HasPassword() && tileEntitySign.IsLocked()) || tileEntitySign.IsOwner(@string));
 
-        return cmds;
+        if (_world.IsEditor() || _entityFocusing.IsGodMode.Value)
+        {
+            return cmds;
+        }
+
+        if ( tileEntitySign.IsOwner(@string) || tileEntitySign.IsUserAllowed(@string))
+            return cmds;
+
+        return new BlockActivationCommand[0];
     }
 
 
