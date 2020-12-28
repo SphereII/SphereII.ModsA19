@@ -20,7 +20,7 @@ class EAIGuardSDX : EAILook
     }
     public bool FetchOrders()
     {
-        if (EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
+        if (!EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
             return false;
 
         if (theEntity is EntityAliveSDX)

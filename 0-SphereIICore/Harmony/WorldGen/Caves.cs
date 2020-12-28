@@ -25,6 +25,45 @@ public class SphereII_CaveProject
         }
     }
 
+    // Make the world darker underground
+    [HarmonyPatch(typeof(SkyManager))]
+    [HarmonyPatch("Update")]
+    public class SphereII_CaveProject_SkyManager
+    {
+        public static bool Prefix(float ___sunIntensity, float ___sMaxSunIntensity)
+        {
+
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
+                return true;
+
+            if (GamePrefs.GetString(EnumGamePrefs.GameWorld) == "Empty" || GamePrefs.GetString(EnumGamePrefs.GameWorld) == "Playtesting")
+                return true;
+
+
+            if (GameManager.Instance.World.GetPrimaryPlayer() == null)
+                return true;
+
+            if (GameManager.Instance.World.GetPrimaryPlayer().position.y < 30)
+            {
+                SkyManager.SetSunIntensity(0.1f);
+            }
+            return true;
+        }
+
+        public static void Postfix(float ___sunIntensity, float ___sMaxSunIntensity)
+        {
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
+                return;
+            if (GameManager.Instance.World.GetPrimaryPlayer() == null)
+                return;
+
+            if (GameManager.Instance.World.GetPrimaryPlayer().position.y < 30)
+            {
+                SkyManager.SetSunIntensity(0.1f);
+            }
+
+        }
+    }
 
     [HarmonyPatch(typeof(SpawnManagerBiomes))]
     [HarmonyPatch("Update")]
@@ -65,11 +104,15 @@ public class SphereII_CaveProject
             }
 
             // Since the cave system can be eratic in its location, we want to try 20 times to find a random spot where they can spawn at.
-            for (int i = 0; i < 20; i++)
+            for (int i = 0; i < 40; i++)
             {
                 Vector2 rangeY = new Vector2(PlayerPosition.y - 10, PlayerPosition.y + 10);
+                if (rangeY.x < 1)
+                    rangeY.x = 2;
 
                 _position = new Vector3(_area.x + GameManager.Instance.World.RandomRange(0f, _area.width - 1f), GameManager.Instance.World.RandomRange(rangeY.x, rangeY.y), _area.y + GameManager.Instance.World.RandomRange(0f, _area.height - 1f));
+                if (_position.y < 1)
+                    _position.y = 2;
                 Vector3i vector3i = World.worldToBlockPos(_position);
                 Chunk chunk = (Chunk)GameManager.Instance.World.GetChunkFromWorldPos(vector3i);
                 if (chunk != null)
@@ -79,7 +122,13 @@ public class SphereII_CaveProject
 
                     // Grab the terrian height. If it's above the terrain level, ignore it.
                     float terrainLevel = (float)(chunk.GetHeight(x, z) + 1);
-                    vector3i.y = (int)GameManager.Instance.World.RandomRange((float)PlayerPosition.y - 10, terrainLevel - 10);
+                    float maxLevel = PlayerPosition.y + 10;
+                    vector3i.y = (int)GameManager.Instance.World.RandomRange((float)PlayerPosition.y - 10, maxLevel);
+                    if (vector3i.y < 1)
+                        vector3i.y = PlayerPosition.y;
+
+                    if (maxLevel >= terrainLevel)
+                        vector3i.y = PlayerPosition.y;
                     if (chunk.CanMobsSpawnAtPos(x, vector3i.y, z, false))
                     {
                         bool flag = isPositionMinDistanceAwayFromAllPlayers(_position, _minDistance);
@@ -94,6 +143,8 @@ public class SphereII_CaveProject
                         }
                         if (flag)
                         {
+                            // Set the y position correctly.
+                            _position.y = vector3i.y;
                             return true;
                         }
                     }
@@ -138,7 +189,7 @@ public class SphereII_CaveProject
                 if (players[i].Spawned)
                 {
                     position = players[i].GetPosition();
-                    rect = new Rect(position.x - 40f, position.z - 40f, 80f, 80f);
+                    rect = new Rect(position.x - 40f, position.z - 40f, 80f, 20f);
                     if (rect.Overlaps(_chunkBiomeSpawnData.area))
                     {
                         flag = true;
@@ -167,11 +218,31 @@ public class SphereII_CaveProject
             if (vector.y > offSet)
                 return;
 
-            // Customize which spawning.xml entry to we want to use for spawns.
-            BiomeSpawnEntityGroupList biomeSpawnEntityGroupList = BiomeSpawningClass.list["Cave"]; ;
-            if (vector.y > 30)
-                biomeSpawnEntityGroupList = BiomeSpawningClass.list["DeepCave"];
 
+            BiomeDefinition biome = GameManager.Instance.World.Biomes.GetBiome(_chunkBiomeSpawnData.biomeId);
+            if (biome == null)
+            {
+                return;
+            }
+
+            // Customize which spawning.xml entry to we want to use for spawns.
+            String CaveType = "Cave";
+            // Search for the biome_Cave spawn group. If not found, load the generic Cave one.
+            BiomeSpawnEntityGroupList biomeSpawnEntityGroupList = BiomeSpawningClass.list[biome.m_sBiomeName + "_Cave"];
+            if (biomeSpawnEntityGroupList == null)
+            {
+                biomeSpawnEntityGroupList = BiomeSpawningClass.list["Cave"];
+            }
+            // if we are below 30, look for the biome specific deep cave, then deep cave if its not set.
+            if (vector.y < 30)
+            {
+                CaveType = "DeepCave";
+                biomeSpawnEntityGroupList = BiomeSpawningClass.list[biome.m_sBiomeName + "_DeepCave"];
+                if (biomeSpawnEntityGroupList == null)
+                {
+                    biomeSpawnEntityGroupList = BiomeSpawningClass.list["DeepCave"];
+                }
+            }
             if (biomeSpawnEntityGroupList == null)
                 return;
 
@@ -194,8 +265,7 @@ public class SphereII_CaveProject
                         {
                             num3 = EntitySpawner.ModifySpawnCountByGameDifficulty(num3);
                         }
-                        entityGroupName = biomeSpawnEntityGroupData.entityGroupRefName + "_" + biomeSpawnEntityGroupData.daytime.ToStringCached<EDaytime>();
-
+                        entityGroupName = biomeSpawnEntityGroupData.entityGroupRefName + "_" + biomeSpawnEntityGroupData.daytime.ToStringCached<EDaytime>() + "_" + CaveType;
                         ulong respawnLockedUntilWorldTime = _chunkBiomeSpawnData.GetRespawnLockedUntilWorldTime(entityGroupName);
                         if (respawnLockedUntilWorldTime <= 0UL || GameManager.Instance.World.worldTime >= respawnLockedUntilWorldTime)
                         {
@@ -215,131 +285,45 @@ public class SphereII_CaveProject
                 num2 = (num2 + 1) % biomeSpawnEntityGroupList.list.Count;
             }
             if (num < 0)
+            {
+                //Debug.Log("max spawn reached: " + entityGroupName);
                 return;
-
+            }
             Bounds bb = new Bounds(vector, new Vector3(4f, 2.5f, 4f));
             GameManager.Instance.World.GetEntitiesInBounds(typeof(Entity), bb, spawnNearList);
             int count = spawnNearList.Count;
             spawnNearList.Clear();
             if (count > 0)
+            {
+                //Debug.Log("Spawn Count is maxed for ");
                 return;
-
+            }
             BiomeSpawnEntityGroupData biomeSpawnEntityGroupData2 = biomeSpawnEntityGroupList.list[num];
             int randomFromGroup = EntityGroups.GetRandomFromGroup(biomeSpawnEntityGroupData2.entityGroupRefName, ref lastClassId, null);
             float spawnDeadChance = biomeSpawnEntityGroupData2.spawnDeadChance;
             _chunkBiomeSpawnData.IncEntitiesSpawned(entityGroupName);
             Entity entity = EntityFactory.CreateEntity(randomFromGroup, vector);
-            entity.SetSpawnerSource(EnumSpawnerSource.Biome, _chunkBiomeSpawnData.chunk.Key, entityGroupName);
+            entity.SetSpawnerSource(EnumSpawnerSource.Dynamic, _chunkBiomeSpawnData.chunk.Key, entityGroupName);
             EntityAlive myEntity = entity as EntityAlive;
-            if ( myEntity )
+            if (myEntity)
             {
                 myEntity.SetSleeper();
             }
+
+            // Debug.Log("Spawning: " + myEntity.entityId + " " + vector );
             GameManager.Instance.World.SpawnEntityInWorld(entity);
+
+
             if (spawnDeadChance > 0f && gameRandom.RandomFloat < spawnDeadChance)
             {
                 entity.Kill(DamageResponse.New(true));
             }
             GameManager.Instance.World.DebugAddSpawnedEntity(entity);
+
         }
     }
 
 
-
-    //// caveBlock02 is used as air blocks below the terrain, so we need to add a check here, so we can replace it with another block.
-    //[HarmonyPatch(typeof(Block))]
-    //[HarmonyPatch("overlapsWithOtherBlock")]
-    //public class SphereII_CaveProject_overlapsWithOtherBlock
-    //{
-    //    public static bool Prefix(Block __instance, WorldBase _world, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue)
-    //    {
-
-    //        if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
-    //            return true;
-
-    //        if (!__instance.isMultiBlock)
-    //        {
-    //            int type = _world.GetBlock(_clrIdx, _blockPos).type;
-    //            return ( type != 0 || Block.list[type].GetBlockName() == "caveBlock02") && !Block.list[type].blockMaterial.IsGroundCover && !Block.list[type].blockMaterial.IsLiquid;
-    //        }
-    //        byte rotation = _blockValue.rotation;
-    //        for (int i = __instance.multiBlockPos.Length - 1; i >= 0; i--)
-    //        {
-    //            int type2 = _world.GetBlock(_clrIdx, _blockPos + __instance.multiBlockPos.Get(i, _blockValue.type, (int)rotation)).type;
-    //            if (type2 != 0 && !Block.list[type2].blockMaterial.IsGroundCover && !Block.list[type2].blockMaterial.IsLiquid)
-    //            {
-    //                return true;
-    //            }
-    //        }
-    //        return false;
-    //    }
-    //}
-
-
-    // caveBlock02 is used as air blocks below the terrain, so we need to add a check here, so we don't get floating blocks.
-    //[HarmonyPatch(typeof(Block))]
-    //[HarmonyPatch("OnNeighborBlockChange")]
-    //public class SphereII_CaveProject_OnNeighborBlockChange
-    //{
-    //    public static bool Prefix(Block __instance, WorldBase world, int _clrIdx, Vector3i _myBlockPos, BlockValue _myBlockValue, Vector3i _blockPosThatChanged, BlockValue _newNeighborBlockValue, BlockValue _oldNeighborBlockValue)
-    //    {
-
-    //        if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
-    //            return true;
-
-    //        // skip this check if its terrain
-    //        if (_myBlockValue.Block.shape.IsTerrain())
-    //            return true;
-
-    //        // if the block that's changed is an air block, and it's below the block, crumble it, since we don't want it floating.
-    //        if (_newNeighborBlockValue.Block.GetBlockName() == "caveBlock02" && _blockPosThatChanged == _myBlockPos + Vector3i.down)
-    //        {
-    //            var block = world.GetBlock(_myBlockPos);
-    //            block.Block.DamageBlock(world, _clrIdx, _myBlockPos, _myBlockValue, block.Block.MaxDamage, -1);
-    //            return false;
-
-    //        }
-
-    //        return true;
-    //    }
-    //}
-
-    // caveBlock02 is used as air blocks below the terrain, so we need to add a check here, so we can replace it with another block.
-    //[HarmonyPatch(typeof(GameManager))]
-    //[HarmonyPatch("PickupBlockServer")]
-    //public class SphereII_CaveProject_PickupBlockServer
-    //{
-    //    public static bool Prefix(GameManager __instance, int _clrIdx, Vector3i _blockPos, BlockValue _blockValue, int _playerId)
-    //    {
-    //        if (!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
-    //            return true;
-
-
-    //        if (!SingletonMonoBehaviour<ConnectionManager>.Instance.IsServer)
-    //        {
-    //            SingletonMonoBehaviour<ConnectionManager>.Instance.SendToServer(NetPackageManager.GetPackage<NetPackagePickupBlock>().Setup(_clrIdx, _blockPos, _blockValue, _playerId), false);
-    //            return true;
-    //        }
-    //        if (__instance.World.GetBlock(_clrIdx, _blockPos).type != _blockValue.type)
-    //        {
-    //            return true;
-    //        }
-    //        if (__instance.World.IsLocalPlayer(_playerId))
-    //        {
-    //            __instance.PickupBlockClient(_clrIdx, _blockPos, _blockValue, _playerId);
-    //        }
-    //        else
-    //        {
-    //            SingletonMonoBehaviour<ConnectionManager>.Instance.SendPackage(NetPackageManager.GetPackage<NetPackagePickupBlock>().Setup(_clrIdx, _blockPos, _blockValue, _playerId), false, _playerId, -1, -1, -1);
-    //        }
-    //        BlockValue blockValue = (Block.list[_blockValue.type].PickupSource != null) ? Block.GetBlockValue(Block.list[_blockValue.type].PickupSource, false) : BlockValue.Air;
-    //        if ( blockValue.type == BlockValue.Air.type && _blockPos.y < __instance.World.GetTerrainHeight( _blockPos.x, _blockPos.z))
-    //            blockValue = new BlockValue((uint)Block.GetBlockByName("caveBlock02", false).blockID);
-    //        __instance.World.SetBlockRPC(_blockPos, blockValue);
-
-    //        return false;
-    //    }
-    //}
 
     [HarmonyPatch(typeof(TerrainGeneratorWithBiomeResource))]
     [HarmonyPatch("GenerateTerrain")]
@@ -354,6 +338,7 @@ public class SphereII_CaveProject
             // Allow us to throttle which chunks get caves or not by creating a list of world positions.
             SphereCache.GenerateCaveChunks();
             SphereII_CaveTunneler.AddCaveToChunk(_chunk);
+
         }
     }
 
@@ -370,23 +355,9 @@ public class SphereII_CaveProject
 
             //// Allow us to throttle which chunks get caves or not by creating a list of world positions.
             SphereCache.GenerateCaveChunks();
-            //SphereII_CaveTunneler.AddCaveToChunk(_chunk);
             SphereII_CaveTunneler.AddDecorationsToCave(_chunk);
         }
     }
 
-    //    [HarmonyPatch(typeof(WorldDecoratorBlocksFromBiome))]
-    //    [HarmonyPatch("decoratePrefabs")]
-    //    public class SphereII_CaveProject_WorldDecoratorBlocksFromBiome
-    //    {
-    //        public static void Postfix(Chunk _chunk)
-    //        {
-    //            if(!Configuration.CheckFeatureStatus(AdvFeatureClass, Feature))
-    //                return;
 
-    //            // Allow us to throttle which chunks get caves or not by creating a list of world positions.
-    ////            SphereCache.GenerateCaveChunks();
-    //           // SphereII_CaveTunneler.AddDecorationsToCave(_chunk);
-    //        }
-    //    }
 }

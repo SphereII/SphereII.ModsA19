@@ -8,7 +8,7 @@ class EAIWanderSDX : EAIWander
 
     public float time;
 
-    private readonly bool blDisplayLog = true;
+    private readonly bool blDisplayLog = false;
     private readonly bool blShowPathFindingBlocks = false;
     public void DisplayLog(String strMessage)
     {
@@ -56,15 +56,21 @@ class EAIWanderSDX : EAIWander
         // Reduces the entity from continuing to walk against a wall
         if (theEntity.moveHelper.BlockedTime >= 0.3f)
         {
+          //  Debug.Log("Continuie(): Blocked Time is greater than 0.3: " + theEntity.moveHelper.BlockedTime);
             EntityUtilities.Stop(theEntity.entityId);
             position = Vector3.zero;
             return false;
         }
 
+
+        //Debug.Log("Blocked Time: " + theEntity.moveHelper.BlockedTime);
+        //Debug.Log("Time: " + time);
+        //Debug.Log("No Path or not planning one: " + theEntity.navigator.noPathAndNotPlanningOne());
         // calling stop here if we can't continue to clear the path and movement. 
         bool result = theEntity.bodyDamage.CurrentStun == EnumEntityStunType.None && theEntity.moveHelper.BlockedTime <= 0.3f && time <= 30f && !theEntity.navigator.noPathAndNotPlanningOne();
         if (!result)
         {
+         //   Debug.Log("Continue(): no stunn, and no path.");
             EntityUtilities.Stop(theEntity.entityId);
             position = Vector3.zero;
             return false;
@@ -82,9 +88,9 @@ class EAIWanderSDX : EAIWander
             int maxDistance = 30;
 
             if (theEntity.IsAlert)
-                position = RandomPositionGenerator.CalcAway(theEntity, 0, maxDistance, maxDistance, theEntity.LastTargetPos);
+                position = RandomPositionGenerator.CalcAway(theEntity, 0, maxDistance, 10, theEntity.LastTargetPos);
             else
-                position = RandomPositionGenerator.Calc(theEntity, maxDistance, maxDistance);
+                position = RandomPositionGenerator.Calc(theEntity, maxDistance, 10);
         }
 
         time = 0f;
@@ -97,6 +103,7 @@ class EAIWanderSDX : EAIWander
             (theEntity as EntityAliveSDX).canJump = false;
             (theEntity as EntityAliveSDX).moveHelper.CanBreakBlocks = true;
         }
+
 
         // Path finding has to be set for Breaking Blocks so it can path through doors
         PathFinderThread.Instance.FindPath(theEntity, position, theEntity.GetMoveSpeed(), true, this);
@@ -113,7 +120,6 @@ class EAIWanderSDX : EAIWander
 
         if (isBusy)
             return false;
-
         // if you are supposed to stay put, don't wander. 
         if (EntityUtilities.CanExecuteTask(theEntity.entityId, EntityUtilities.Orders.Stay))
             return false;
@@ -132,6 +138,7 @@ class EAIWanderSDX : EAIWander
 
         if (theEntity.sleepingOrWakingUp)
             return false;
+
         if (theEntity.GetTicksNoPlayerAdjacent() >= 120)
             return false;
         if (theEntity.bodyDamage.CurrentStun != EnumEntityStunType.None)
@@ -139,6 +146,7 @@ class EAIWanderSDX : EAIWander
         int num = (int)(200f * executeWaitTime);
         if (base.GetRandom(1000) >= num)
             return false;
+
         if (manager.lookTime > 0f)
             return false;
 

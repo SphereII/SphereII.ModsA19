@@ -112,10 +112,8 @@ public class ItemActionEntryResharpenSDX : BaseItemActionEntry
         ItemValue itemValue = ((XUiC_ItemStack)base.ItemController).ItemStack.itemValue;
         ItemClass forId = ItemClass.GetForId(itemValue.type);
         XUiC_CraftingWindowGroup childByType = xui.FindWindowGroupByName("crafting").GetChildByType<XUiC_CraftingWindowGroup>();
-        if (childByType != null)
-            return;
 
-            if (itemValue.HasQuality)
+        if (itemValue.HasQuality)
         {
             if (itemValue.PercentUsesLeft < 0.30)
             {
@@ -152,11 +150,13 @@ public class ItemActionEntryResharpenSDX : BaseItemActionEntry
                 GameManager.ShowTooltip(ItemController.xui.playerUI.entityPlayer, text);
                 return;
             }
+            if (childByType != null)
+            {
                 recipe.ingredients.Add(new ItemStack(new ItemValue(itemClass.Id, false), 1));
                 recipe.itemValueType = itemValue.type;
                 recipe.craftingTime = 1;
                 recipe.craftExpGain = 1;
-            
+            }
             // ItemClass.GetForId(recipe.itemValueType);
             GameRandom random = GameRandomManager.Instance.CreateGameRandom();
             float flRandom = random.RandomRange((int)itemValue.UseTimes, (itemValue.MaxUseTimes / 1.20f));

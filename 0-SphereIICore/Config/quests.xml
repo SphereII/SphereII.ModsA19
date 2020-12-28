@@ -20,7 +20,7 @@
       <objective type="GotoPOISDX, Mods" value="10-6000" phase="1">
         <property name="completion_distance" value="50" />
         <property name="phase" value="1" />
-        <property name="PrefabName" value="store_gun" />
+        <property name="PrefabName" value="trader_hugh" />
         <property name="nav_object" value="quest" />
       </objective>
       

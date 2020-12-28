@@ -1,4 +1,5 @@
 using HarmonyLib;
+using UnityEngine;
 
 /**
  * SphereII_EAITarget_Tweaks
@@ -20,6 +21,10 @@ class SphereII_EAITarget_Tweaks
         {
             if (!EntityUtilities.IsHuman(__instance.theEntity.entityId))
                 return __result;
+
+            // If its a vehicle.. umm.. no.
+            if (_e is EntityVehicle)
+                return false;
 
             //if (__instance.theEntity.IsSleeping)
             //    return __result;
@@ -45,7 +50,7 @@ class SphereII_EAITarget_Tweaks
 
                 // We have some complicated checks here, since this method gets called by 3 different target methods.
                 FactionManager.Relationship myRelationship = FactionManager.Instance.GetRelationshipTier(__instance.theEntity, _e);
-                // Debug.Log("Checking Relationship: " + myRelationship.ToString());
+                 //Debug.Log("Checking Relationship: " + myRelationship.ToString() + " " + __instance.theEntity.EntityName + " and " + _e.EntityName);
                 switch (myRelationship)
                 {
                     case FactionManager.Relationship.Hate:
