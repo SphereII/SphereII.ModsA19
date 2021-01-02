@@ -141,6 +141,7 @@
     <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementEveryDawn.cs" />
     <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementEveryXDaySDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementEveryXHourSDX.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementIsBloodMoon.cs" />
     <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementOnSpecificBiomeSDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\Buffs\RequirementSameFactionSDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\Cache\SphereCache.cs" />

@@ -111,7 +111,7 @@
 
       <!-- Allow themed settings to be applied: See Harmony/Atmosphere/-->
       <property class="Theme" >
-        <property name="Spook" value="true"/>
+        <property name="Spook" value="false"/>
       </property>
       
       <property class="AdvancedWorkstationFeatures" >
