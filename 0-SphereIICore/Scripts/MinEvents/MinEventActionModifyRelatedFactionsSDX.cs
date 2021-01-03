@@ -17,10 +17,10 @@ using UnityEngine;
 /// <triggered_effect trigger="onSelfBuffStart" action="ModifyRelatedFactionsSDX, Mods" target="self" faction="bandits" related="whisperers" value="10" />
 /// <!--
 ///     Subtracts 10 points to the player's relationship with white river, and adjust the player's
-///     relationships with the bandit, red team, blue team, and green team factions according to
+///     relationships with the bandits, red team, blue team, and green team factions according to
 ///     their current relationships with white river.
 /// -->
-/// <triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyRelatedFactionsSDX, Mods" target="self" faction="whiteriver" related="bandit,redteam,blueteam,greenteam" value="-10" />
+/// <triggered_effect trigger="onSelfPrimaryActionEnd" action="ModifyRelatedFactionsSDX, Mods" target="self" faction="whiteriver" related="bandits,redteam,blueteam,greenteam" value="-10" />
 /// <!--
 ///     Adds 10 points to the player's relationship with the red team.
 ///     Since the "related" attribute is omitted, it does not modify the relationships with any
@@ -32,7 +32,7 @@ using UnityEngine;
 /// </example>
 public class MinEventActionModifyRelatedFactionsSDX : MinEventActionRemoveBuff
 {
-    private bool debug = true; // for logging when testing
+    private bool debug = false; // for logging when testing
 
     private string faction = "";
 
@@ -42,6 +42,10 @@ public class MinEventActionModifyRelatedFactionsSDX : MinEventActionRemoveBuff
 
     public override void Execute(MinEventParams _params)
     {
+        if (debug)
+        {
+            Debug.Log("MinEventActionModifyRelatedFactionsSDX.Execute...");
+        }
         for (int i = 0; i < targets.Count; i++)
         {
             EntityAlive entity = targets[i];
@@ -53,7 +57,7 @@ public class MinEventActionModifyRelatedFactionsSDX : MinEventActionRemoveBuff
                     otherFaction.ModifyRelationship(entity.factionId, value);
                     if (debug)
                     {
-                        Debug.Log(faction + " relationship modified by " + value);
+                        Debug.Log(string.Format("{0} relationship modified by {1}", faction, value));
                     }
                     ModifyRelatedFactionRelationships(entity.factionId, otherFaction);
                 }
@@ -86,7 +90,7 @@ public class MinEventActionModifyRelatedFactionsSDX : MinEventActionRemoveBuff
 
                 if (debug)
                 {
-                    Debug.Log(relatedFactions[i] + " relationship modified by " + modifier);
+                    Debug.Log(string.Format("{0} relationship modified by {1}", relatedFactions[i], modifier));
                 }
             }
         }
