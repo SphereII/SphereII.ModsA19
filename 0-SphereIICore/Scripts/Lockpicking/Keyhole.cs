@@ -20,7 +20,7 @@ namespace Lockpicking
         // 7 Days To Die stuff
         public int NumLockPicks = 0;
         public EntityPlayer player;
-
+        public BlockValue blockValue;
         #region ThirdParty
         // Events
         UnityEvent lockpickBroke = new UnityEvent();
@@ -213,46 +213,7 @@ namespace Lockpicking
             else
                 UpdateLockPicks(false);
 
-            // give more time to avoid breaking pick locks.
-            if (player != null)
-            {
-
-                // Default values.
-                maxGiveAmount = 30f;
-                maxCloseDistance = 10f;
-
-                // float lockPickBreakChance = EffectManager.GetValue(PassiveEffects.LockPickBreakChance, player.inventory.holdingItemItemValue, 0, player, null, default(FastTags), true, true, true, true, 1, true);
-                // breakTime += lockPickBreakChance;
-                ProgressionValue value = player.Progression.GetProgressionValue("perkLockPicking");
-                switch( value.Level )
-                {
-                    case 0:
-                        breakTime = 0.1f;
-                        break;
-                    case 1:
-                        breakTime = Random.Range(0.15f, 0.30f);
-                        maxGiveAmount += 5f;
-                        maxCloseDistance += 5f;
-                        break;
-                    case 2:
-                        breakTime = Random.Range(0.35f, 0.65f);
-                        maxGiveAmount += 10f;
-                        maxCloseDistance += 10f;
-                        break;
-                    case 3:
-                        breakTime = Random.Range(0.75f, 1.25f);
-                        maxGiveAmount += 15f;
-                        maxCloseDistance += 15f;
-                        break;
-                    default: // if its not any of the other levels
-                        breakTime = 0.1f;
-                        break;
-                }
-                //value.Level
-                //minCloseDistance = 5f;
-
-                //maxCloseDistance = 20f;
-            }
+   
 
         }
         void OnDisable()
@@ -653,16 +614,10 @@ namespace Lockpicking
         public void SetLock(float newLockAngle, float newLockGive, float newCloseDistance)
         {
 
-            if (player != null)
-            {
-                ProgressionValue value = player.Progression.GetProgressionValue("perkLockPicking");
-                float lockPickTime = EffectManager.GetValue(PassiveEffects.LockPickTime, player.inventory.holdingItemItemValue, 0, player, null, default(FastTags), true, true, true, true, 1, true);
-                newLockGive = (newLockGive + (100 * lockPickTime));
-            }
             _lockAngle = newLockAngle;
             _lockGive = newLockGive;
             _closeDistance = newCloseDistance;
-
+            Debug.Log("Lock Pick: " + _lockAngle + " Give: " + _lockGive + " Close distance: " + _closeDistance);
             if (audioLockpickEnter && audioLockpickEnter.isActiveAndEnabled)
             {
                 audioLockpickEnter.DelayPlay(0.7f);
@@ -683,6 +638,64 @@ namespace Lockpicking
         public void ResetLock()
         {
             LockIsOpen = false;
+            
+            // give more time to avoid breaking pick locks.
+            if (player != null)
+            {
+                int difficulty = 0;
+                Block secureBlock = Block.list[blockValue.type];
+                if (secureBlock != null)
+                {
+                    if (secureBlock.Properties.Values.ContainsKey("LockPickDifficulty"))
+                        difficulty = int.Parse(secureBlock.Properties.Values["LockPickDifficulty"]);
+                }
+                // Default values.
+                maxGiveAmount = 1f;
+                switch (difficulty)
+                {
+                    case 0:
+                        maxGiveAmount = 10f;
+                        break;
+                    case 1:
+                        maxGiveAmount = 8f;
+                        break;
+                    case 2:
+                        maxGiveAmount = 6f;
+                        break;
+                    case 3:
+                        maxGiveAmount = 4f;
+                        break;
+                    case 4:
+                        maxGiveAmount = 2f;
+                        break;
+
+                    default: // if its not any of the other levels
+                        maxGiveAmount = 4f;
+                        break;
+                }
+
+                ProgressionValue value = player.Progression.GetProgressionValue("perkLockPicking");
+                switch (value.Level)
+                {
+                    case 0:
+                        breakTime = 0.1f;
+                        break;
+                    case 1:
+                        breakTime = 0.1f;
+                        maxGiveAmount += 5f;
+                        break;
+                    case 2:
+                        breakTime = 0.1f;
+                        maxGiveAmount += 10f;
+                        break;
+
+                    case 3:
+                        breakTime = 0.1f;
+                        maxGiveAmount += 15f;
+                        break;
+
+                }
+            }
             SetLock(minLockAngle, maxLockAngle,
                 minGiveAmount, maxGiveAmount,
                 minCloseDistance, maxCloseDistance);

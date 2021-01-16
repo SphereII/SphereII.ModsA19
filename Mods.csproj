@@ -34,7 +34,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony, Version=2.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>packages\Lib.Harmony.2.0.2\lib\net35\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>C:\Program Files (x86)\Steam\steamapps\common\7 Days To Die\7DaysToDie_Data\Managed\Assembly-CSharp.dll</HintPath>
@@ -87,11 +87,16 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="0-SphereIICore\Harmony\AIDirectorBloodMoon\AIDirectorBloodMoonParty.cs" />
+    <Compile Include="0-SphereIICore\Harmony\Animation\AnimalAvatarController.cs" />
     <Compile Include="0-SphereIICore\Harmony\Animation\AvatarController.cs" />
     <Compile Include="0-SphereIICore\Harmony\Animation\EModelBase.cs" />
+    <Compile Include="0-SphereIICore\Harmony\Atmosphere\Spook.cs" />
+    <Compile Include="0-SphereIICore\Harmony\Blocks\BlockAddChids.cs" />
     <Compile Include="0-SphereIICore\Harmony\Blocks\BlockOnEntityCollidedWithBlock.cs" />
+    <Compile Include="0-SphereIICore\Harmony\Blocks\BlockSecureLoot.cs" />
     <Compile Include="0-SphereIICore\Harmony\Blocks\Particles.cs" />
     <Compile Include="0-SphereIICore\Harmony\Dialog\DialogFromXML.cs" />
+    <Compile Include="0-SphereIICore\Harmony\DMS\Playertracker.cs" />
     <Compile Include="0-SphereIICore\Harmony\EAI\EAITarget.cs" />
     <Compile Include="0-SphereIICore\Harmony\EntityAlive\Faction.cs" />
     <Compile Include="0-SphereIICore\Harmony\EntityMoveHelper\EntityMoveHelper.cs" />
@@ -101,6 +106,7 @@
     <Compile Include="0-SphereIICore\Harmony\HarmonyInit.cs" />
     <Compile Include="0-SphereIICore\Harmony\ItemFeatures\AdvancedItemRepair.cs" />
     <Compile Include="0-SphereIICore\Harmony\ItemFeatures\DurabilityAffectsDamage.cs" />
+    <Compile Include="0-SphereIICore\Harmony\NetPackage\NetPackageQuestGotoPoint.cs" />
     <Compile Include="0-SphereIICore\Harmony\NPCFeatures\EntityAlive.cs" />
     <Compile Include="0-SphereIICore\Harmony\NPCFeatures\EntityAliveStartingEquipment.cs" />
     <Compile Include="0-SphereIICore\Harmony\NPCFeatures\EntityNPCFixSpeed.cs" />
@@ -119,10 +125,13 @@
     <Compile Include="0-SphereIICore\Harmony\Standard\XMLDebugger.cs" />
     <Compile Include="0-SphereIICore\Harmony\TileEntities\AlwaysActive.cs" />
     <Compile Include="0-SphereIICore\Harmony\TileEntities\SphereII_PoweredWorkstations.cs" />
+    <Compile Include="0-SphereIICore\Harmony\TileEntities\TileEntitySign.cs" />
     <Compile Include="0-SphereIICore\Harmony\UI\DisableXPIconNotification.cs" />
     <Compile Include="0-SphereIICore\Harmony\UI\FilterGameWorld.cs" />
     <Compile Include="0-SphereIICore\Harmony\UI\UnlockEnemyHealthBar.cs" />
+    <Compile Include="0-SphereIICore\Harmony\UI\XUiV_Texture.cs" />
     <Compile Include="0-SphereIICore\Harmony\WorldGen\Caves.cs" />
+    <Compile Include="0-SphereIICore\Harmony\XML\ModInfo.cs" />
     <Compile Include="0-SphereIICore\Harmony\ZombieFeatures\EntityFlyingEAITasks.cs" />
     <Compile Include="0-SphereIICore\Harmony\ZombieFeatures\HeadshotOnly.cs" />
     <Compile Include="0-SphereIICore\Harmony\ZombieFeatures\InertEntity.cs" />
@@ -196,6 +205,19 @@
     <Compile Include="0-SphereIICore\Scripts\Features\QuickContinue.cs" />
     <Compile Include="0-SphereIICore\Scripts\Items\ItemActionEntryResharpenSDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\Items\ItemsUtilities.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\Cipher.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\CipherControls.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\CipherDemoUI.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\Keyhole.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\KeyholeDemoUI.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockButton.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockControls.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockDemoCommonControls.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockEmissive.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockEmissiveControls.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LockObjectRotation.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\LocksetAudio.cs" />
+    <Compile Include="0-SphereIICore\Scripts\Lockpicking\SphereII_Locks.cs" />
     <Compile Include="0-SphereIICore\Scripts\MinEvents\MinEventActionAddBuffByFactionSDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\MinEvents\MinEventActionAnimatorSDX.cs" />
     <Compile Include="0-SphereIICore\Scripts\MinEvents\MinEventActionChangeFactionSDX.cs" />
@@ -293,6 +315,7 @@
     <Content Include="0-SphereIICore\Prefabs\sphereii_cave_10.xml" />
     <Content Include="0-SphereIICore\Prefabs\sphereii_cave_11.tts" />
     <Content Include="0-SphereIICore\Prefabs\sphereii_cave_11.xml" />
+    <Content Include="0-SphereIICore\Scripts\Lockpicking\README.txt.txt" />
     <Content Include="Blooms Animal Husbandry\Config\blocks.xml" />
     <Content Include="Blooms Animal Husbandry\Config\buffs.xml" />
     <Content Include="Blooms Animal Husbandry\Config\dialogs.xml" />

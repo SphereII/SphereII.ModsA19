@@ -89,6 +89,7 @@ public class SphereII_Locks
             keyhole.lockpickAnimator = FindTransform("LockpickB").GetComponent<Animator>();
             keyhole.lockpickAnimator.gameObject.SetActive(true);
 
+            keyhole.blockValue = _blockValue;
             Camera cam = FindTransform("Cam2").GetComponentInChildren<Camera>();
             if (cam != null)
             {
