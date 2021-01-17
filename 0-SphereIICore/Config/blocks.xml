@@ -32,6 +32,7 @@
       <property class="AdvancedLockpicking" >
         <property name="Logging" value="false"/>
         <property name="AdvancedLocks" value="false" />
+        <property name="QuestFullReset" value="true" />
         <property name="LockPrefab" value="#@modfolder(Locks):Resources/Locks.unity3d?Lockset01" />
       </property>
 

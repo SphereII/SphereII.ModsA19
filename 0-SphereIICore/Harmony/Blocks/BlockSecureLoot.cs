@@ -41,33 +41,6 @@ public class SphereII_Blocks_BlockSecureLoot
             }
             switch (_indexInBlockActivationCommands)
             {
-                case 0:
-                    if (!tileEntitySecureLootContainer.IsLocked() || tileEntitySecureLootContainer.IsUserAllowed(GamePrefs.GetString(EnumGamePrefs.PlayerId)))
-                    {
-                        __instance.OnBlockActivated(_world, _cIdx, _blockPos, _blockValue, _player);
-                        return false;
-                    }
-                    Manager.BroadcastPlayByLocalPlayer(_blockPos.ToVector3() + Vector3.one * 0.5f, "Misc/locked");
-                    return false;
-                case 1:
-                    tileEntitySecureLootContainer.SetLocked(true);
-                    Manager.BroadcastPlayByLocalPlayer(_blockPos.ToVector3() + Vector3.one * 0.5f, "Misc/locking");
-                    GameManager.ShowTooltip(_player as EntityPlayerLocal, "containerLocked");
-                    return false;
-                case 2:
-                    tileEntitySecureLootContainer.SetLocked(false);
-                    Manager.BroadcastPlayByLocalPlayer(_blockPos.ToVector3() + Vector3.one * 0.5f, "Misc/unlocking");
-                    GameManager.ShowTooltip(_player as EntityPlayerLocal, "containerUnlocked");
-                    return false;
-                case 3:
-                    {
-                        LocalPlayerUI uiforPlayer = LocalPlayerUI.GetUIForPlayer(_player as EntityPlayerLocal);
-                        if (uiforPlayer != null)
-                        {
-                            XUiC_KeypadWindow.Open(uiforPlayer, tileEntitySecureLootContainer);
-                        }
-                        return false;
-                    }
                 case 4:
                     {
                         // Check if the player has lock picks.
@@ -86,6 +59,8 @@ public class SphereII_Blocks_BlockSecureLoot
                         return false;
 
                     }
+                default:
+                    return true;
             }
 
             return true;
@@ -116,8 +91,8 @@ public class SphereII_Blocks_BlockSecureLoot
 
             if (!tileEntitySecureDoor.IsLocked() || tileEntitySecureDoor.IsUserAllowed(GamePrefs.GetString(EnumGamePrefs.PlayerId)))
             {
-                    __instance.OnBlockActivated(_world, _cIdx, _blockPos, _blockValue, _player);
-                    return false;
+                __instance.OnBlockActivated(_world, _cIdx, _blockPos, _blockValue, _player);
+                return false;
             }
 
 
@@ -148,6 +123,77 @@ public class SphereII_Blocks_BlockSecureLoot
                 }
             }
             return true;
+        }
+    }
+
+
+    [HarmonyPatch(typeof(TileEntityLootContainer))]
+    [HarmonyPatch("Reset")]
+    public class SphereII_TileEntityReset
+    {
+
+        public static bool IsSupposedToBeLocked(Vector3i position)
+        {
+            // Detect which prefab we are at.
+            var prefabInstance = GameManager.Instance.GetDynamicPrefabDecorator()?.GetPrefabAtPosition(position.ToVector3());
+            if (prefabInstance == null)
+                return false;
+
+            for (var i = 0; i < prefabInstance.prefab.size.x; i++)
+            {
+                for (var j = 0; j < prefabInstance.prefab.size.z; j++)
+                {
+                    for (var k = 0; k < prefabInstance.prefab.size.y; k++)
+                    {
+                        // Find the world position of this block then check if it matches our current position.
+                        var num = i + prefabInstance.boundingBoxPosition.x;
+                        var num2 = j + prefabInstance.boundingBoxPosition.z;
+                        var num7 = World.toBlockY(k + prefabInstance.boundingBoxPosition.y);
+                        var localPosition = new Vector3i(num, num7, num2);
+                        if (localPosition != position)
+                            continue;
+
+                        // Grab the blockValue from the original prefab reference, then use its meta value.
+                        var blockValue = prefabInstance.prefab.GetBlock(i, k, j);
+                        if (blockValue.ischild)
+                            continue;
+
+                        return (blockValue.meta & 4) > 0;
+                    }
+                }
+            }
+
+            return false;
+        }
+        public static bool Prefix(TileEntityLootContainer __instance)
+        {
+            if (__instance.bPlayerStorage || __instance.bPlayerBackpack)
+                return true;
+
+            // Check if this feature is enabled.
+            if (!Configuration.CheckFeatureStatus(AdvFeatureClass, "QuestFullReset"))
+                return true;
+            
+            switch (__instance)
+            {
+                case TileEntitySecure tileEntity when tileEntity.IsLocked():
+                    return true;
+                case TileEntitySecure tileEntity:
+                {
+                    if (IsSupposedToBeLocked(__instance.ToWorldPos())) // Check the meta of the original blockvalue.
+                        tileEntity.SetLocked(true);
+                    return true;
+                }
+                case TileEntitySecureLootContainer secureLootContainer when secureLootContainer.IsLocked():
+                    return true;
+                case TileEntitySecureLootContainer secureLootContainer: // All non-player secure containers are locked by default.
+                {
+                    secureLootContainer.SetLocked(true);
+                    return true;
+                }
+                default:
+                    return true;
+            }
         }
     }
 }
