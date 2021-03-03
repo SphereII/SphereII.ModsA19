@@ -563,7 +563,7 @@ public class EntityAliveSDX : EntityNPC
                     TileEntitySecureDoor tileEntitySecureDoor = GameManager.Instance.World.GetTileEntity(0, blockPos) as TileEntitySecureDoor;
                     if (tileEntitySecureDoor != null)
                     {
-                        if (tileEntitySecureDoor.IsLocked() && tileEntitySecureDoor.GetOwner() == "")
+                        if (tileEntitySecureDoor.IsLocked())
                             canOpenDoor = false;
                     }
                     //TileEntityPowered poweredDoor = GameManager.Instance.World.GetTileEntity(0, blockPos) as TileEntityPowered;
