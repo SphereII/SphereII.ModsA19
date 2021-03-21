@@ -105,7 +105,7 @@
         <!-- Turn on or off Maslow for NPCs -->
         <property name="AnimalMaslow" value="true" />
         <!-- Turn on or off maslow for animals. -->
-        <property name="HumanTags"  value="human,bandit,survivor,npc,trader" />
+        <property name="HumanTags"  value="human,bandit,survivor,npc,trader,deployed" />
         <!-- Tags that translate that the entity is alive and has a brain -->
 
       </property>
