@@ -186,14 +186,6 @@ public class EntityAliveSDX : EntityNPC
         return 0.25f;
     }
 
-    public override void SetSleeper()
-    {
-        // if configured as a sleeper, this should wake them up
-        if (isAlwaysAwake)
-            return;
-        base.SetSleeper();
-    }
-
     /// <summary>
     /// Overrides EntityAlive.OnAddedToWorld().
     /// When entities are spawned into sleeper volumes, which happens in SleeperVolume.Spawn(),
