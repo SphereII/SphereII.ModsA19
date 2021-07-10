@@ -12,31 +12,26 @@ class EAISetAsTargetIfHurtSDX : EAISetAsTargetIfHurt
 
     public override bool CanExecute()
     {
-        // If the Revenge Target is your leader, then forgive them?
-        if (theEntity.GetRevengeTarget() != null)
-        {
-            Entity myLeader = EntityUtilities.GetLeaderOrOwner(theEntity.entityId);
-            if (myLeader)
-            {
-                if (theEntity.GetRevengeTarget().entityId == myLeader.entityId)
-                    return false;
-                if (EntityUtilities.IsAnAlly(theEntity.entityId, theEntity.GetRevengeTarget().entityId))
-                    return false;
-            }
-        }
+        // If the attack or revenge target is a friend, then forgive them
+        if (IsFriend(theEntity.GetRevengeTarget()))
+            return false;
 
-        if (theEntity.GetAttackTarget() != null)
+        if (IsFriend(theEntity.GetAttackTarget()))
+            return false;
+
+        return base.CanExecute();
+    }
+
+    private bool IsFriend(EntityAlive target)
+    {
+        if (target != null)
         {
-            Entity myLeader = EntityUtilities.GetLeaderOrOwner(theEntity.entityId);
-            if (myLeader)
-            {
-                if (theEntity.GetAttackTarget().entityId == myLeader.entityId)
-                    return false;
-                if (EntityUtilities.IsAnAlly(theEntity.entityId, theEntity.GetAttackTarget().entityId))
-                    return false;
-            }
+            if (target.factionId == theEntity.factionId)
+                return true;
+            if (EntityUtilities.IsAnAlly(theEntity.entityId, target.entityId))
+                return true;
         }
-        return true;
+        return false;
     }
 
 }
