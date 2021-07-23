@@ -8,7 +8,7 @@ using UnityEngine;
 /// <summary>
 /// Human sleepers are automatically awoken when they become active.
 /// </summary>
-public class HumanSleepersAwaken : IHarmony
+public class HumanSleepersAwaken
 {
     /// <summary>
     /// Harmony postfix patch of the EntityAlive.SetSleeperActive method.
