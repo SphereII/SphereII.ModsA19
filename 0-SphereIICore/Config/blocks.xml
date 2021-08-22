@@ -107,7 +107,8 @@
         <!-- Turn on or off maslow for animals. -->
         <property name="HumanTags"  value="human,bandit,survivor,npc,trader,deployed" />
         <!-- Tags that translate that the entity is alive and has a brain -->
-
+        <property name="FactionRelationshipCVars" value="false" />
+        <!-- Enables the addition of faction relationship cvars (see FactionRelationshipCVars.cs)  -->
       </property>
 
       <!-- Allow themed settings to be applied: See Harmony/Atmosphere/-->
