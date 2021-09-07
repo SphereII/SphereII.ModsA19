@@ -33,7 +33,7 @@ public class FactionRelationshipCVars
         private static Faction[] factions = null;
         private static bool initialized = false;
 
-        private static void Initialize()
+        private static void Initialize(EntityPlayerLocal __instance)
         {
             initialized = true;
             enabled = Configuration.CheckFeatureStatus(AdvFeatureClass, Feature);
@@ -46,13 +46,36 @@ public class FactionRelationshipCVars
                 BindingFlags.NonPublic | BindingFlags.Instance);
 
             if (factionsInfo != null)
+            {
                 factions = (Faction[]) factionsInfo.GetValue(FactionManager.Instance);
+                SetRelationshipsFromCVars(__instance);
+            }
+        }
+
+        /// <summary>
+        /// This method sets the 7D2D vanilla faction relationships from the cvars.
+        /// It is necessary because cvars are saved, but the faction relationships are not -
+        /// they are re-read from the XML every time the game loads.
+        /// </summary>
+        private static void SetRelationshipsFromCVars(EntityPlayerLocal __instance)
+        {
+            for (var i = 0; i < factions.Length; i++)
+            {
+                if (factions[i] == null || factions[i].IsPlayerFaction)
+                    continue;
+                
+                var relationship = __instance.GetCVar($"{CVarPrefix}{factions[i].Name}");
+                if (relationship != 0f)
+                {
+                    factions[i].SetRelationship(__instance.factionId, relationship);
+                }
+            }
         }
 
         public static void Postfix(EntityPlayerLocal __instance)
         {
             if (!initialized)
-                Initialize();
+                Initialize(__instance);
             
             if (!enabled || factions == null)
                 return;
